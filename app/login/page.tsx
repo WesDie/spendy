@@ -21,9 +21,6 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
-  const { setTheme } = useTheme();
-  setTheme("dark");
-
   const router = useRouter();
   const searchParams = useSearchParams();
   const regSuccess = searchParams.get("regsuccess");

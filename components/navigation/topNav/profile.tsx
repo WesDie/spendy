@@ -1,0 +1,101 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Settings,
+  User,
+  Search,
+  Moon,
+  Github,
+  LifeBuoy,
+  LogOut,
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import { useCommandMenu } from "@/components/providers/command-menu-provider";
+import { Switch } from "@/components/ui/switch";
+import Link from "next/link";
+
+export function Profile() {
+  const { openDialog: openDialogType } = useCommandMenu();
+  const { setTheme, theme } = useTheme();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <Avatar className="w-8 h-8">
+            <AvatarImage src="https://github.com/wesdie.png" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem disabled>
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem onSelect={() => openDialogType("command")}>
+            <Search className="mr-2 h-4 w-4" />
+            <span>Search Menu</span>
+            <DropdownMenuShortcut>⌘J</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center justify-between"
+          >
+            <div className="flex items-center">
+              <Moon className="mr-2 h-4 w-4" />
+              <span>Dark Mode</span>
+            </div>
+            <Switch
+              checked={theme === "dark"}
+              className="data-[state=checked]:bg-foreground"
+            />
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Link
+            href="https://github.com/WesDie/spendy"
+            className="w-full flex items-center"
+            target="_blank"
+          >
+            <Github className="mr-2 h-4 w-4" />
+            <span>GitHub</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem disabled>
+          <LifeBuoy className="mr-2 h-4 w-4" />
+          <span>Support</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem disabled>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

@@ -1,9 +1,10 @@
-import { Chart } from "@/components/chart";
+import { TopNavBar } from "@/components/navigation/topNav/top-nav-bar";
 
 export default function Home() {
   return (
-    <main>
-      <Chart />
+    <main className="w-full flex flex-col">
+      <TopNavBar />
+      <h3 className="text-2xl text-muted-foreground m-auto">Overview page</h3>
     </main>
   );
 }
