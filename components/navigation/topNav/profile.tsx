@@ -23,10 +23,29 @@ import { useTheme } from "next-themes";
 import { useCommandMenu } from "@/components/providers/command-menu-provider";
 import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function Profile() {
   const { openDialog: openDialogType } = useCommandMenu();
   const { setTheme, theme } = useTheme();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      router.push("/login");
+    } else {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -90,7 +109,13 @@ export function Profile() {
           <span>Support</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            handleLogout();
+          }}
+          disabled={isLoggingOut}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
