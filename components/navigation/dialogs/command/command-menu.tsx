@@ -80,7 +80,7 @@ export function CommandMenu({
             <CommandItem
               onSelect={() => {
                 setTheme(theme === "dark" ? "light" : "dark");
-                openDialog("command");
+                openDialog(null);
               }}
             >
               {theme === "dark" ? (
