@@ -1,8 +1,14 @@
 import Link from "next/link";
 
-export function Links() {
+export function Links({ type }: { type: "mobile" | "desktop" }) {
   return (
-    <nav className="hidden flex-col gap-2 text-lg font-medium md:flex md:flex-row md:items-center md:gap-3 md:text-sm lg:gap-4">
+    <nav
+      className={`${
+        type === "mobile"
+          ? "flex gap-2 text-sm"
+          : "hidden md:flex md:flex-row md:items-center md:gap-3 md:text-sm lg:gap-4"
+      }`}
+    >
       <Link
         href="/"
         className="text-muted-foreground transition-colors hover:text-foreground"
