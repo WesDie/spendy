@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { CommandMenuProvider } from "@/components/providers/command-menu-provider";
+import { ReactQueryProvider } from "@/components/providers/react-query-provider";
+import { DialogProvider } from "@/components/providers/dialogs-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,7 +26,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CommandMenuProvider>{children}</CommandMenuProvider>
+          <ReactQueryProvider>
+            <DialogProvider>
+              <CommandMenuProvider>{children}</CommandMenuProvider>
+            </DialogProvider>
+          </ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

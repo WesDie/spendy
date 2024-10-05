@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/command";
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ProjectSearch } from "./project-search";
-import { AccountSearch } from "./account-search";
+import { GroupSearch } from "./group-search";
 import {
   Search,
   ChartBarIncreasing,
@@ -21,12 +21,14 @@ import {
   Sun,
   User,
   Moon,
+  Plus,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   useCommandMenu,
   DialogType,
 } from "@/components/providers/command-menu-provider";
+import { useDialogs } from "@/components/providers/dialogs-provider";
 
 export function CommandMenu({
   dialogType,
@@ -37,6 +39,7 @@ export function CommandMenu({
 }) {
   const { theme, setTheme } = useTheme();
   const { openDialog } = useCommandMenu();
+  const { openDialog: openCreateDialog } = useDialogs();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -66,7 +69,7 @@ export function CommandMenu({
           <CommandGroup heading="Suggestions">
             <CommandItem disabled>
               <ChartBarIncreasing className="mr-2 h-4 w-4" />
-              <span>My Account</span>
+              <span>My Groups</span>
               <CommandShortcut>⌘1</CommandShortcut>
             </CommandItem>
             <CommandItem disabled>
@@ -95,9 +98,9 @@ export function CommandMenu({
               <Search className="mr-2 h-4 w-4" />
               <span>Search Projects</span>
             </CommandItem>
-            <CommandItem onSelect={() => openDialog("account")}>
+            <CommandItem onSelect={() => openDialog("group")}>
               <Search className="mr-2 h-4 w-4" />
-              <span>Search Accounts</span>
+              <span>Search Groups</span>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
@@ -106,6 +109,12 @@ export function CommandMenu({
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
               <CommandShortcut>⌘P</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+          <CommandGroup heading="Create">
+            <CommandItem onSelect={() => openCreateDialog("groupDialog")}>
+              <Plus className="mr-2 h-4 w-4" />
+              <span>Create Group</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
@@ -120,11 +129,11 @@ export function CommandMenu({
       />
 
       <SearchDialog
-        open={dialogType === "account"}
+        open={dialogType === "group"}
         onOpenChange={() => openDialog(null)}
-        title="Search Accounts"
-        description="Search through your accounts."
-        searchComponent={<AccountSearch />}
+        title="Search Groups"
+        description="Search through your groups."
+        searchComponent={<GroupSearch />}
       />
     </>
   );

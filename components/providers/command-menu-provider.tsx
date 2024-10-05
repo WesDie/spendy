@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { CommandMenu } from "@/components/navigation/dialogs/command/command-menu";
 
-export type DialogType = "command" | "project" | "account" | null;
+export type DialogType = "command" | "project" | "group" | null;
 
 interface CommandMenuContextType {
   openDialog: (type: DialogType | null) => void;
