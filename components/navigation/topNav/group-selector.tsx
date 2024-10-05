@@ -66,7 +66,6 @@ export function GroupSelector() {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search groups..." />
           <CommandList>
             {groups && (
               <>
