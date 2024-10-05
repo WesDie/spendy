@@ -3,7 +3,7 @@ import { useCommandMenu } from "@/components/providers/command-menu-provider";
 import { CommandShortcut } from "@/components/ui/command";
 import { Search } from "lucide-react";
 
-export function SearcInput() {
+export function SearchInput() {
   const { openDialog: openDialogType } = useCommandMenu();
 
   return (
@@ -16,7 +16,12 @@ export function SearcInput() {
         <Search className="h-4 w-4" /> Search...
         <CommandShortcut>⌘J</CommandShortcut>
       </Button>
-      <Button variant="ghost" size="icon" className="md:hidden">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="md:hidden"
+        onClick={() => openDialogType("command")}
+      >
         <Search className="h-4 w-4" />
       </Button>
     </>
