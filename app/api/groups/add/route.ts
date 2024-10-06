@@ -2,35 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { revalidateTag } from "next/cache";
 
+type GroupData = {
+  name: string;
+  type: string;
+  icon: string;
+};
+
 export async function POST(req: NextRequest) {
   const supabase = createClient();
   const { groupData } = await req.json();
 
-  if (!groupData.name) {
+  const errors = validateGroupData(groupData);
+  if (errors.length > 0) {
     return NextResponse.json(
-      {
-        error: {
-          message: "Fill in the name field",
-          fields: ["name"],
-        },
-      },
+      { error: { message: "Validation failed", fields: errors } },
       { status: 400 }
     );
   }
 
-  if (groupData.type !== "External") {
-    return NextResponse.json(
-      {
-        error: {
-          message: "Only external groups are supported",
-          fields: [],
-        },
-      },
-      { status: 400 }
-    );
-  }
   const { data: userData, error: userError } = await supabase.auth.getUser();
-
   if (userError) {
     return NextResponse.json({ error: userError.message }, { status: 500 });
   }
@@ -72,4 +62,35 @@ export async function POST(req: NextRequest) {
     { message: "Success", groupData: data[0] },
     { status: 200 }
   );
+}
+
+function validateGroupData(groupData: GroupData) {
+  const errors = [];
+
+  if (!groupData.name) {
+    errors.push("name");
+  }
+
+  if (groupData.type !== "External") {
+    errors.push("type");
+  }
+
+  if (groupData.name.toLowerCase() === "my account") {
+    errors.push("name");
+  }
+
+  const invalidChars = [":", "/", "\\", "?", "%", "*", "|", "<", ">", '"', " "];
+  if (invalidChars.some((char) => groupData.name.includes(char))) {
+    errors.push("name");
+  }
+
+  if (groupData.name.length > 32) {
+    errors.push("name");
+  }
+
+  if (groupData.name.length < 3) {
+    errors.push("name");
+  }
+
+  return errors;
 }
