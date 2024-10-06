@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} flex h-dvh w-full`}>
+      <body className={`${inter.className} flex max-h-dvh min-h-dvh w-full`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
