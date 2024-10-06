@@ -13,15 +13,11 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const { setTheme } = useTheme();
-  setTheme("dark");
-
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
