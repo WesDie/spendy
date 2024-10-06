@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Check, CheckCircleIcon, Copy, PlusIcon } from "lucide-react";
 
 type GroupDialogProps = {
   open: boolean;
@@ -28,6 +29,23 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState({ message: "", fields: [] as string[] });
+  const [isCreated, setIsCreated] = useState(false);
+  const [shareLink, setShareLink] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        name: "",
+        type: "External",
+      });
+      setIsSubmitting(false);
+      setError({ message: "", fields: [] });
+      setIsCreated(false);
+      setShareLink("");
+      setCopied(false);
+    }
+  }, [open]);
 
   const handleCreate = () => {
     setIsSubmitting(true);
@@ -44,7 +62,11 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
       .then((data) => {
         setIsSubmitting(false);
         if (data.message === "Success") {
-          onClose();
+          setIsCreated(true);
+          console.log(data.groupData);
+          setShareLink(
+            `https://spendy-mu.vercel.app/groups/${data.groupData.id}`
+          );
           queryClient.invalidateQueries({ queryKey: ["groups"] });
         } else {
           setError(data.error);
@@ -56,41 +78,79 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
       });
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Group</DialogTitle>
+          <DialogTitle>
+            {isCreated ? `${formData.name} created` : "Create Group"}
+          </DialogTitle>
           <DialogDescription>
-            Create a new group to manage your expenses.
+            {isCreated
+              ? "You can now share the group with contacts via this link."
+              : "Create a new group to manage your expenses."}
           </DialogDescription>
         </DialogHeader>
-        {error.message && <Alert variant="destructive">{error.message}</Alert>}
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              placeholder="Group Name"
-              className="col-span-3"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              error={error.fields?.includes("name")}
-            />
+        {isCreated ? (
+          <div className="w-full">
+            <div className="flex items-center space-x-2 mt-4">
+              <Input value={shareLink} readOnly />
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={handleCopyLink}
+                disabled={copied}
+              >
+                {copied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {error.message && (
+              <Alert variant="destructive">{error.message}</Alert>
+            )}
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  placeholder="Group Name"
+                  className="col-span-3"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  error={error.fields?.includes("name")}
+                />
+              </div>
+            </div>
+          </>
+        )}
         <DialogFooter>
-          <Button
-            type="submit"
-            onClick={() => handleCreate()}
-            disabled={isSubmitting}
-          >
-            Create
-          </Button>
+          {isCreated ? (
+            <Button onClick={onClose}>Close</Button>
+          ) : (
+            <Button
+              type="submit"
+              onClick={() => handleCreate()}
+              disabled={isSubmitting}
+            >
+              Create
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
