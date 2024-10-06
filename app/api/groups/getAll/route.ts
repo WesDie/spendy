@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   }
 
   const { data: groups, error: groupsError } = await supabase
-    .from("spendy.group_members")
+    .from("spendy_group_members")
     .select("*")
     .eq("user_id", userData?.user?.id ?? "");
 
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   const { data, error } = await supabase
-    .from("spendy.groups")
+    .from("spendy_groups")
     .select("*")
     .in("id", groups?.map((group) => group.group_id) ?? []);
 

@@ -53,7 +53,7 @@ export function Profile() {
         <Button variant="ghost" size="icon" className="rounded-full">
           <Avatar className="w-8 h-8">
             <AvatarImage src="https://github.com/wesdie.png" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>SP</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

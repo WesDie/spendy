@@ -37,7 +37,7 @@ export function GroupSelector() {
         res.json()
       ),
   });
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(0);
 
   if (isLoading || groups?.length === 0)
     return <Skeleton className="h-[36px] w-[200px] bg-secondary" />;
@@ -56,7 +56,9 @@ export function GroupSelector() {
               <AvatarImage
                 src={groups?.find((group) => group.id === value)?.icon}
               />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>
+                {groups?.find((group) => group.id === value)?.name[0]}
+              </AvatarFallback>
             </Avatar>
             {groups?.find((group) => group.id === value)?.name ||
               "Select group..."}
@@ -98,7 +100,9 @@ export function GroupSelector() {
                             <div className="flex items-center">
                               <Avatar className="w-4 h-4 mr-2">
                                 <AvatarImage src={group.icon} />
-                                <AvatarFallback>CN</AvatarFallback>
+                                <AvatarFallback>
+                                  {group.name[0].toUpperCase()}
+                                </AvatarFallback>
                               </Avatar>
                               {group.name}
                             </div>

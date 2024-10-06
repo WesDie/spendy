@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { data, error } = await supabase
-    .from("spendy.groups")
+    .from("spendy_groups")
     .insert({
       name: groupData.name,
       type: groupData.type,
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { data: groupMemberData, error: groupMemberError } = await supabase
-    .from("spendy.group_members")
+    .from("spendy_group_members")
     .insert({
       group_id: data[0].id,
       user_id: userData.user.id,
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   revalidateTag("groups");
 
   return NextResponse.json(
-    { message: "Success", groupData: data },
+    { message: "Success", groupData: data[0] },
     { status: 200 }
   );
 }
