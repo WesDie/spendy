@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import {
   Command,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
@@ -20,6 +20,10 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDialogs } from "@/components/providers/dialogs-provider";
+import { useRouter } from "next/navigation";
+import { useGroupContext } from "@/components/providers/group-context-provider";
+import { usePathname } from "next/navigation";
+
 type Group = {
   id: number;
   name: string;
@@ -28,8 +32,11 @@ type Group = {
 };
 
 export function GroupSelector() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const { openDialog } = useDialogs();
+  const { currentGroup, setCurrentGroup } = useGroupContext();
   const { data: groups, isLoading } = useQuery<Group[]>({
     queryKey: ["groups"],
     queryFn: () =>
@@ -37,7 +44,29 @@ export function GroupSelector() {
         res.json()
       ),
   });
-  const [value, setValue] = React.useState(0);
+
+  React.useEffect(() => {
+    if (groups && groups.length > 0 && !currentGroup) {
+      const groupName = pathname.split("/").pop();
+      const [baseName, duplicateIndex] = groupName?.split(":") || [
+        groupName,
+        "",
+      ];
+      const targetGroup = groups.find((group) => {
+        return (
+          group.name === baseName &&
+          (!duplicateIndex ||
+            groups.filter((g) => g.name === baseName).indexOf(group) ===
+              parseInt(duplicateIndex) - 1)
+        );
+      });
+      if (targetGroup) {
+        setCurrentGroup(targetGroup);
+      } else {
+        setCurrentGroup(groups[0]);
+      }
+    }
+  }, [groups, pathname, setCurrentGroup, currentGroup]);
 
   if (isLoading || groups?.length === 0)
     return <Skeleton className="h-[36px] w-[200px] bg-secondary" />;
@@ -53,15 +82,10 @@ export function GroupSelector() {
         >
           <div className="flex items-center">
             <Avatar className="w-4 h-4 mr-2">
-              <AvatarImage
-                src={groups?.find((group) => group.id === value)?.icon}
-              />
-              <AvatarFallback>
-                {groups?.find((group) => group.id === value)?.name[0]}
-              </AvatarFallback>
+              <AvatarImage src={currentGroup?.icon} />
+              <AvatarFallback>{currentGroup?.name[0]}</AvatarFallback>
             </Avatar>
-            {groups?.find((group) => group.id === value)?.name ||
-              "Select group..."}
+            {currentGroup?.name || "Select group..."}
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -87,33 +111,54 @@ export function GroupSelector() {
                     <CommandGroup heading={category}>
                       {groups
                         .filter((group) => group.type === category)
-                        .map((group) => (
-                          <CommandItem
-                            key={group.id}
-                            value={group.id.toString()}
-                            onSelect={(currentValue) => {
-                              setValue(parseInt(currentValue));
-                              setOpen(false);
-                            }}
-                            className="justify-between"
-                          >
-                            <div className="flex items-center">
-                              <Avatar className="w-4 h-4 mr-2">
-                                <AvatarImage src={group.icon} />
-                                <AvatarFallback>
-                                  {group.name[0].toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              {group.name}
-                            </div>
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                value === group.id ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
+                        .map((group) => {
+                          const duplicateIndex =
+                            groups.filter((g) => g.name === group.name).length >
+                            1
+                              ? groups
+                                  .filter((g) => g.name === group.name)
+                                  .indexOf(group) + 1
+                              : "";
+                          return (
+                            <CommandItem
+                              key={group.id}
+                              value={group.id.toString()}
+                              onSelect={() => {
+                                setCurrentGroup(group);
+                                if (group.type === "Personal") {
+                                  router.push("/");
+                                } else {
+                                  router.push(
+                                    `/groups/${group.name}${
+                                      duplicateIndex ? `:${duplicateIndex}` : ""
+                                    }`
+                                  );
+                                }
+                                setOpen(false);
+                              }}
+                              className="justify-between"
+                            >
+                              <div className="flex items-center">
+                                <Avatar className="w-4 h-4 mr-2">
+                                  <AvatarImage src={group.icon} />
+                                  <AvatarFallback>
+                                    {group.name[0].toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                {group.name}
+                                {duplicateIndex ? ` (${duplicateIndex})` : ""}
+                              </div>
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  currentGroup?.id === group.id
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          );
+                        })}
                       {index ===
                         Object.keys(
                           groups.reduce(

@@ -3,11 +3,15 @@ import { AlignEndHorizontal } from "lucide-react";
 import { CommandGroup, CommandItem } from "@/components/ui/command";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
+import { useCommandMenu } from "@/components/providers/command-menu-provider";
+import { useGroupContext } from "@/components/providers/group-context-provider";
 
 interface Group {
-  id: string;
+  id: number;
   name: string;
-  type: string;
+  type: "Personal" | "External";
+  icon: string;
 }
 
 export function GroupSearch() {
@@ -19,6 +23,9 @@ export function GroupSearch() {
       ),
   });
 
+  const { openDialog } = useCommandMenu();
+  const router = useRouter();
+  const { setCurrentGroup } = useGroupContext();
   if (isLoading)
     return <Skeleton className="h-[36px] w-[200px] bg-secondary" />;
 
@@ -39,12 +46,42 @@ export function GroupSearch() {
               <CommandGroup heading={category}>
                 {groups
                   .filter((group) => group.type === category)
-                  .map((group) => (
-                    <CommandItem key={group.id}>
-                      <AlignEndHorizontal className="mr-2 h-4 w-4" />
-                      <span>{group.name}</span>
-                    </CommandItem>
-                  ))}
+                  .map((group) => {
+                    const duplicateIndex =
+                      groups.filter((g) => g.name === group.name).length > 1
+                        ? groups
+                            .filter((g) => g.name === group.name)
+                            .indexOf(group) + 1
+                        : "";
+                    return (
+                      <CommandItem
+                        key={group.id}
+                        value={
+                          group.name +
+                          (duplicateIndex ? ` (${duplicateIndex})` : "")
+                        }
+                        onSelect={() => {
+                          setCurrentGroup(group);
+                          if (group.type === "Personal") {
+                            router.push("/");
+                          } else {
+                            router.push(
+                              `/groups/${group.name}${
+                                duplicateIndex ? `:${duplicateIndex}` : ""
+                              }`
+                            );
+                          }
+                          openDialog(null);
+                        }}
+                      >
+                        <AlignEndHorizontal className="mr-2 h-4 w-4" />
+                        <span>
+                          {group.name}
+                          {duplicateIndex ? ` (${duplicateIndex})` : ""}
+                        </span>
+                      </CommandItem>
+                    );
+                  })}
               </CommandGroup>
             </React.Fragment>
           ))}

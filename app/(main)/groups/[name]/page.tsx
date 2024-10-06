@@ -1,7 +1,7 @@
 "use client";
 import { useGroupContext } from "@/components/providers/group-context-provider";
 
-export default function Home() {
+export default function GroupPage() {
   const { currentGroup } = useGroupContext();
 
   const groupName = currentGroup?.name;
