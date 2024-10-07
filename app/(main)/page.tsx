@@ -1,4 +1,5 @@
 "use client";
+import MainOverview from "@/components/global/overview/main-overview";
 import { useGroupContext } from "@/components/providers/group-context-provider";
 
 export default function Home() {
@@ -15,10 +16,8 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <h3 className="text-2xl text-muted-foreground m-auto">
-        Overview page ({groupName})
-      </h3>
-    </div>
+    <main className="flex flex-col h-full w-full p-6 px-4 md:p-8">
+      <MainOverview />
+    </main>
   );
 }
