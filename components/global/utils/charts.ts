@@ -7,15 +7,23 @@ export const generateDailyData = (
   const dateMap = new Map();
 
   data.forEach((item) => {
-    const date = new Date(item.date);
+    const date = new Date(item.created_at);
     date.setDate(date.getDate() + 1);
     const dateString = date.toDateString();
     if (dateMap.has(dateString)) {
       const existingItem = dateMap.get(dateString);
-      existingItem.income += item.income;
-      existingItem.expenses += item.expenses;
+      if (item.amount > 0) {
+        existingItem.income += item.amount;
+      } else {
+        existingItem.expenses += Math.abs(item.amount);
+      }
     } else {
-      dateMap.set(dateString, { ...item, date: dateString });
+      dateMap.set(dateString, {
+        ...item,
+        date: dateString,
+        income: item.amount > 0 ? item.amount : 0,
+        expenses: item.amount < 0 ? Math.abs(item.amount) : 0,
+      });
     }
   });
 
@@ -106,7 +114,7 @@ export const getTimeFormat = (activeDateOption: string) => {
 export const firstTransactionDate = (data: any[]) =>
   new Date(
     data.reduce((earliest: Date, item: any) => {
-      const date = new Date(item.date);
+      const date = new Date(item.created_at);
       return date < earliest ? date : earliest;
     }, new Date())
   );

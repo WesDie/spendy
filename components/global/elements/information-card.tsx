@@ -9,7 +9,7 @@ export default function InformationCard({
   icon = <DollarSign />,
 }: {
   title: string;
-  value: number;
+  value: number | null;
   change?: string;
   type?: "money" | "percentage";
   icon?: React.ReactNode;
@@ -23,18 +23,22 @@ export default function InformationCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div
-          className={`text-2xl font-bold ${
-            value > 0 ? "text-green-500" : value < 0 ? "text-red-500" : ""
-          }`}
-        >
-          {type === "money"
-            ? new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(value)
-            : `${value}%`}
-        </div>
+        {value ? (
+          <div
+            className={`text-2xl font-bold ${
+              value > 0 ? "text-green-500" : value < 0 ? "text-red-500" : ""
+            }`}
+          >
+            {type === "money"
+              ? new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(value)
+              : `${value}%`}
+          </div>
+        ) : (
+          <div className="text-2xl font-bold text-muted-foreground">---</div>
+        )}
         {change && <p className="text-xs text-muted-foreground">{change}</p>}
       </CardContent>
     </Card>

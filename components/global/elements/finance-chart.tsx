@@ -22,9 +22,7 @@ import {
 import { BalanceChart } from "./charts/balance-chart";
 import { ExpenseChart } from "./charts/expenses-chart";
 import { ChartControls } from "./charts/chart-controls";
-
-const originalChartData = require("@/dummyexpenses.json");
-const dailyChartData = getDailyChartData(originalChartData);
+import { Transaction } from "@/components/global/overview/main-overview";
 
 const chartConfigs = {
   incomeExpenses: {
@@ -51,7 +49,12 @@ const chartConfigs = {
   },
 };
 
-export default function FinanceChart() {
+export default function FinanceChart({
+  transactions,
+}: {
+  transactions: Transaction[];
+}) {
+  const dailyChartData = getDailyChartData(transactions);
   const [activeView, setActiveView] = useState<"incomeExpenses" | "balance">(
     "incomeExpenses"
   );
@@ -66,33 +69,17 @@ export default function FinanceChart() {
   React.useEffect(() => {
     let { startDate, endDate } = getDateRange();
 
+    startDate.setDate(startDate.getDate() + 1);
+
     // For 'total' view, use the firstTransactionDate
     if (activeDateOption === "total") {
-      startDate = firstTransactionDate(originalChartData);
+      startDate = firstTransactionDate(transactions);
       endDate = new Date(); // Set to current date
     }
 
-    // Adjust startDate to the first day of its month
-    const adjustedStartDate = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth() + (activeDateOption === "total" ? 0 : 1),
-      2
-    );
-
-    // Adjust endDate to the last day of its month
-    const adjustedEndDate = new Date(
-      endDate.getFullYear(),
-      endDate.getMonth() + 1,
-      0
-    );
-
     // Fill in data for all days in the range
     const filledData: any[] = [];
-    for (
-      let d = new Date(adjustedStartDate);
-      d <= adjustedEndDate;
-      d.setDate(d.getDate() + 1)
-    ) {
+    for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
       const existingData = dailyChartData.find(
         (item) => new Date(item.date).toDateString() === d.toDateString()
       );
@@ -103,10 +90,6 @@ export default function FinanceChart() {
           date: d.toISOString(),
           income: 0,
           expenses: 0,
-          balance:
-            filledData.length > 0
-              ? filledData[filledData.length - 1].balance
-              : 0,
         });
       }
     }

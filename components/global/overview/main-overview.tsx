@@ -2,8 +2,53 @@ import { DatePickerWithRange } from "../elements/date-range-picker";
 import InformationCard from "../elements/information-card";
 import FinanceChart from "../elements/finance-chart";
 import ExpenseTable from "../elements/expenses-table";
+import { useQuery } from "@tanstack/react-query";
+import { getAllTransactionData } from "../utils/transactions";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { useEffect, useState } from "react";
+import { Percent } from "lucide-react";
+
+export type Transaction = {
+  id: string;
+  amount: number;
+  created_at: Date;
+  title: string;
+  type: string;
+  user_id: string;
+  category: string;
+};
 
 export default function MainOverview() {
+  const { data: transactions, error: transactionsError } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: () => fetch("/api/transactions/getAll").then((res) => res.json()),
+  });
+  const { getDateRange } = useGlobalContext();
+  const [transactionData, setTransactionData] = useState({
+    totalBalance: null,
+    totalIncome: null,
+    totalSpend: null,
+    totalProfit: null,
+  } as {
+    totalBalance: number | null;
+    totalIncome: number | null;
+    totalSpend: number | null;
+    totalProfit: number | null;
+  });
+
+  useEffect(() => {
+    if (transactions) {
+      const { totalBalance, totalIncome, totalSpend, totalProfit } =
+        getAllTransactionData(transactions, getDateRange());
+      setTransactionData({
+        totalBalance,
+        totalIncome,
+        totalSpend,
+        totalProfit,
+      });
+    }
+  }, [transactions, getDateRange]);
+
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">
       <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
@@ -13,29 +58,26 @@ export default function MainOverview() {
       <div className="flex flex-col gap-4">
         <div className="w-full grid grid-rows-4 md:grid-rows-none md:grid-cols-4 gap-4">
           <InformationCard
-            title="Total Income"
-            value={1212.69}
-            change="+20.1% from last month"
+            title="Current Balance"
+            value={transactionData.totalBalance}
           />
           <InformationCard
             title="Total Expenses"
-            value={-796.23}
-            change="-10.1% from last month"
+            value={transactionData.totalSpend}
           />
           <InformationCard
             title="Total Profit"
-            value={416.46}
-            change="+20.1% from last month"
+            value={transactionData.totalIncome}
           />
           <InformationCard
             title="Total Profit Margin"
-            value={20.1}
-            change="+20.1% from last month"
+            value={transactionData.totalProfit}
             type="percentage"
+            icon={<Percent />}
           />
         </div>
-        <FinanceChart />
-        <ExpenseTable />
+        {transactions && <FinanceChart transactions={transactions} />}
+        {transactions && <ExpenseTable transactions={transactions} />}
       </div>
     </div>
   );

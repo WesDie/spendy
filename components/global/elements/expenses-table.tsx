@@ -39,52 +39,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const data: Transaction[] = [
-  {
-    id: "m5gr84i9",
-    category: "Food",
-    title: "Lunch at Joe's",
-    date: "2022-01-01",
-    amount: 15.99,
-  },
-  {
-    id: "3u1reuv4",
-    category: "Transportation",
-    title: "Gas for Car",
-    date: "2022-01-05",
-    amount: 30.0,
-  },
-  {
-    id: "derv1ws0",
-    category: "Income",
-    title: "Paycheck",
-    date: "2022-01-15",
-    amount: 1000.0,
-  },
-  {
-    id: "5kma53ae",
-    category: "Entertainment",
-    title: "Movie Night",
-    date: "2022-01-20",
-    amount: -20.0,
-  },
-  {
-    id: "bhqecj4p",
-    category: "Utilities",
-    title: "Electricity Bill",
-    date: "2022-01-25",
-    amount: -120.0,
-  },
-];
-
-export type Transaction = {
-  id: string;
-  category: string;
-  title: string;
-  date: string;
-  amount: number;
-};
+import { Transaction } from "@/components/global/overview/main-overview";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -114,7 +69,7 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "date",
+    accessorKey: "created_at",
     header: ({ column }) => {
       return (
         <Button
@@ -132,7 +87,11 @@ export const columns: ColumnDef<Transaction>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div>{row.getValue("date")}</div>,
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("created_at"));
+      const formatted = date.toLocaleString("en-US", { timeZone: "UTC" });
+      return <div>{formatted}</div>;
+    },
   },
   {
     accessorKey: "amount",
@@ -178,7 +137,11 @@ export const columns: ColumnDef<Transaction>[] = [
   },
 ];
 
-export default function TransactionTable() {
+export default function TransactionTable({
+  transactions,
+}: {
+  transactions: Transaction[];
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -188,7 +151,7 @@ export default function TransactionTable() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: transactions,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -235,7 +198,7 @@ export default function TransactionTable() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {data.map((transaction) => {
+                  {transactions.map((transaction) => {
                     return (
                       <DropdownMenuCheckboxItem
                         key={transaction.id}
@@ -298,6 +261,7 @@ export default function TransactionTable() {
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="flex-1 text-sm text-muted-foreground">
+              {table.getRowModel().rows.length} of{" "}
               {table.getFilteredRowModel().rows.length} row(s) visible.
             </div>
             <div className="space-x-2">

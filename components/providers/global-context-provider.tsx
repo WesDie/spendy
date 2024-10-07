@@ -1,7 +1,16 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { addMonths, subMonths, format, isAfter } from "date-fns";
+import {
+  addMonths,
+  subMonths,
+  format,
+  isAfter,
+  startOfMonth,
+  startOfYear,
+  endOfYear,
+  endOfMonth,
+} from "date-fns";
 
 type Group = {
   id: number;
@@ -120,11 +129,20 @@ export function GlobalContextProvider({
   const getDateRange = () => {
     switch (activeDateOption) {
       case "month":
-        return { startDate: subMonths(currentDate, 1), endDate: currentDate };
+        return {
+          startDate: startOfMonth(currentDate),
+          endDate: endOfMonth(currentDate),
+        };
       case "halfyear":
-        return { startDate: subMonths(currentDate, 6), endDate: currentDate };
+        return {
+          startDate: startOfMonth(subMonths(currentDate, 5)),
+          endDate: endOfMonth(currentDate),
+        };
       case "year":
-        return { startDate: subMonths(currentDate, 12), endDate: currentDate };
+        return {
+          startDate: startOfYear(currentDate),
+          endDate: endOfYear(currentDate),
+        };
       case "total":
         return { startDate: new Date(0), endDate: new Date() };
       default:

@@ -45,7 +45,6 @@ export default function RegisterPage() {
         if (data.message === "Success") {
           router.push("/login?regsuccess=true");
         } else {
-          console.log(data.error);
           setError(data.error);
         }
       })
