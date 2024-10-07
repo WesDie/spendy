@@ -1,6 +1,6 @@
 import { DatePickerWithRange } from "../elements/date-range-picker";
 import InformationCard from "../elements/information-card";
-import BigChart from "../elements/big-chart";
+import FinanceChart from "../elements/finance-chart";
 import ExpenseTable from "../elements/expenses-table";
 
 export default function MainOverview() {
@@ -34,7 +34,7 @@ export default function MainOverview() {
             type="percentage"
           />
         </div>
-        <BigChart />
+        <FinanceChart />
         <ExpenseTable />
       </div>
     </div>

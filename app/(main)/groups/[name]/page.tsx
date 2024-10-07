@@ -1,8 +1,8 @@
 "use client";
-import { useGroupContext } from "@/components/providers/group-context-provider";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 export default function GroupPage() {
-  const { currentGroup } = useGroupContext();
+  const { currentGroup } = useGlobalContext();
 
   const groupName = currentGroup?.name;
 

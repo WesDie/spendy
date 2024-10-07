@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDialogs } from "@/components/providers/dialogs-provider";
 import { useRouter } from "next/navigation";
-import { useGroupContext } from "@/components/providers/group-context-provider";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { usePathname } from "next/navigation";
 
 type Group = {
@@ -36,7 +36,7 @@ export function GroupSelector() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const { openDialog } = useDialogs();
-  const { currentGroup, setCurrentGroup } = useGroupContext();
+  const { currentGroup, setCurrentGroup } = useGlobalContext();
   const { data: groups, isLoading } = useQuery<Group[]>({
     queryKey: ["groups"],
     queryFn: () =>

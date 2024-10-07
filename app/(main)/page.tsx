@@ -1,11 +1,9 @@
 "use client";
 import MainOverview from "@/components/global/overview/main-overview";
-import { useGroupContext } from "@/components/providers/group-context-provider";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 export default function Home() {
-  const { currentGroup } = useGroupContext();
-
-  const groupName = currentGroup?.name;
+  const { currentGroup } = useGlobalContext();
 
   if (!currentGroup) {
     return (

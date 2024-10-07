@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useCommandMenu } from "@/components/providers/command-menu-provider";
-import { useGroupContext } from "@/components/providers/group-context-provider";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 interface Group {
   id: number;
@@ -25,7 +25,7 @@ export function GroupSearch() {
 
   const { openDialog } = useCommandMenu();
   const router = useRouter();
-  const { setCurrentGroup } = useGroupContext();
+  const { setCurrentGroup } = useGlobalContext();
   if (isLoading)
     return <Skeleton className="h-[36px] w-[200px] bg-secondary" />;
 

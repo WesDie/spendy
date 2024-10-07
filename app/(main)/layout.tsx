@@ -1,7 +1,7 @@
 import { CommandMenuProvider } from "@/components/providers/command-menu-provider";
 import { DialogProvider } from "@/components/providers/dialogs-provider";
 import { TopNavBar } from "@/components/navigation/topNav/top-nav-bar";
-import { GroupContextProvider } from "@/components/providers/group-context-provider";
+import { GlobalContextProvider } from "@/components/providers/global-context-provider";
 
 export default function RootLayout({
   children,
@@ -9,7 +9,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <GroupContextProvider>
+    <GlobalContextProvider>
       <DialogProvider>
         <CommandMenuProvider>
           <main className="w-full flex flex-col">
@@ -18,6 +18,6 @@ export default function RootLayout({
           </main>
         </CommandMenuProvider>
       </DialogProvider>
-    </GroupContextProvider>
+    </GlobalContextProvider>
   );
 }
