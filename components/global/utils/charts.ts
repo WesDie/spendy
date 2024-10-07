@@ -7,7 +7,9 @@ export const generateDailyData = (
   const dateMap = new Map();
 
   data.forEach((item) => {
-    const dateString = new Date(item.date).toDateString();
+    const date = new Date(item.date);
+    date.setDate(date.getDate() + 1);
+    const dateString = date.toDateString();
     if (dateMap.has(dateString)) {
       const existingItem = dateMap.get(dateString);
       existingItem.income += item.income;
@@ -20,7 +22,7 @@ export const generateDailyData = (
   let cumulativeIncome = 0;
   let cumulativeExpenses = 0;
 
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate())) {
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
     const dateString = d.toDateString();
     if (dateMap.has(dateString)) {
       const item = dateMap.get(dateString);
