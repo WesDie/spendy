@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import {
   Select,
@@ -14,17 +13,49 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import SettingsCard from "./elements/settings-card";
 import { useTheme } from "next-themes";
+import { useThemeContext } from "@/components/providers/theme-provider";
 
-type ColorTheme = "red" | "blue" | "yellow";
-const colorThemes: { [key in ColorTheme]: string } = {
-  red: "bg-red-500",
-  blue: "bg-blue-500",
-  yellow: "bg-yellow-500",
-};
+const colorThemes = [
+  {
+    name: "Default",
+    light: "bg-zinc-500",
+    dark: "bg-zinc-500",
+  },
+  {
+    name: "Red",
+    light: "bg-red-600",
+    dark: "bg-red-600",
+  },
+  {
+    name: "Orange",
+    light: "bg-orange-600",
+    dark: "bg-orange-600",
+  },
+  {
+    name: "Yellow",
+    light: "bg-yellow-400",
+    dark: "bg-yellow-400",
+  },
+  {
+    name: "Green",
+    light: "bg-green-600",
+    dark: "bg-green-600",
+  },
+  {
+    name: "Rose",
+    light: "bg-rose-600",
+    dark: "bg-rose-600",
+  },
+  {
+    name: "Gray",
+    light: "bg-gray-900",
+    dark: "bg-gray-900",
+  },
+];
 
 export default function AppearanceSettings() {
-  const [selectedColor, setSelectedColor] = useState<ColorTheme>("blue");
   const { theme, setTheme } = useTheme();
+  const { themeColor, setThemeColor } = useThemeContext();
 
   return (
     <SettingsCard title="Appearance" description="Change your appearance.">
@@ -55,27 +86,29 @@ export default function AppearanceSettings() {
           </p>
         </div>
         <RadioGroup
-          defaultValue={selectedColor}
-          onValueChange={(value) => setSelectedColor(value as ColorTheme)}
-          className="grid grid-cols-3 gap-4 w-fit"
+          defaultValue={themeColor}
+          onValueChange={(value) => setThemeColor(value as ThemeColors)}
+          className="flex flex-wrap gap-4 w-fit"
         >
-          {Object.entries(colorThemes).map(([color, bgClass]) => (
+          {colorThemes.map(({ name, light, dark }) => (
             <Label
-              key={color}
-              className={`flex flex-col items-center space-y-2 rounded-md cursor-pointer`}
+              key={name}
+              className={`flex flex-col items-center space-y-2 rounded-md cursor-pointer group`}
             >
-              <RadioGroupItem value={color} id={color} className="sr-only" />
+              <RadioGroupItem value={name} id={name} className="sr-only" />
               <div
-                className={`p-1 rounded-lg ${
-                  selectedColor === color ? "ring-2 ring-primary" : ""
+                className={`p-1 rounded-lg group-hover:bg-muted-foreground/40 transition-colors duration-300 ${
+                  themeColor === name ? "ring-2 ring-white" : ""
                 }`}
               >
                 <div
-                  className={`w-[200px] h-[100px] p-2 rounded-md ${bgClass}`}
+                  className={`w-[200px] h-[100px] p-2 rounded-md ${
+                    theme === "light" ? light : dark
+                  }`}
                 />
               </div>
               <span className="text-sm font-medium">
-                {color.charAt(0).toUpperCase() + color.slice(1)}
+                {name.charAt(0).toUpperCase() + name.slice(1)}
               </span>
             </Label>
           ))}
