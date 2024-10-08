@@ -31,7 +31,7 @@ export function Profile() {
   const { setTheme, theme } = useTheme();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const handleLogout = async () => {
     setIsLoggingOut(true);
     const response = await fetch("/api/auth/logout", {
@@ -48,7 +48,7 @@ export function Profile() {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
           <Avatar className="w-8 h-8">
@@ -66,8 +66,12 @@ export function Profile() {
             <span>Profile</span>
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/settings" className="w-full flex items-center">
+          <DropdownMenuItem className="p-0">
+            <Link
+              href="/settings"
+              onClick={() => setOpen(false)}
+              className="w-full flex items-center px-2 py-1.5"
+            >
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
