@@ -79,10 +79,19 @@ export default function FinanceChart({
 
     // Fill in data for all days in the range
     const filledData: any[] = [];
-    for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
-      const existingData = dailyChartData.find(
-        (item) => new Date(item.date).toDateString() === d.toDateString()
-      );
+    const endTime = endDate.getTime();
+    const dailyChartMap = new Map(
+      dailyChartData.map((item) => [new Date(item.date).toDateString(), item])
+    );
+
+    for (
+      let d = new Date(startDate);
+      d.getTime() <= endTime;
+      d.setDate(d.getDate() + 1)
+    ) {
+      const dateString = d.toDateString();
+      const existingData = dailyChartMap.get(dateString);
+
       if (existingData) {
         filledData.push(existingData);
       } else {
