@@ -71,7 +71,7 @@ export default function MainOverview() {
             value={transactionData.totalSpend}
           />
           <InformationCard
-            title="Total Profit"
+            title="Total income"
             value={transactionData.totalIncome}
           />
           <InformationCard
