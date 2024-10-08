@@ -1,0 +1,22 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function OverviewSkeleton() {
+  return (
+    <div className="flex flex-col h-full w-full gap-6 md:gap-10">
+      <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
+        <h3 className="text-3xl font-semibold">Dashboard</h3>
+        <Skeleton className="w-48 h-12" />
+      </div>
+      <div className="flex flex-col gap-4">
+        <div className="w-full grid grid-rows-4 md:grid-rows-none md:grid-cols-4 gap-4">
+          <Skeleton className="w-full h-[110px]" />
+          <Skeleton className="w-full h-[110px]" />
+          <Skeleton className="w-full h-[110px]" />
+          <Skeleton className="w-full h-[110px]" />
+        </div>
+        <Skeleton className="w-full h-[300px]" />
+        <Skeleton className="w-full h-[650px]" />
+      </div>
+    </div>
+  );
+}

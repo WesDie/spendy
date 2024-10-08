@@ -69,7 +69,7 @@ export function GroupSelector() {
   }, [groups, pathname, setCurrentGroup, currentGroup]);
 
   if (isLoading || groups?.length === 0)
-    return <Skeleton className="h-[36px] w-[200px] bg-secondary" />;
+    return <Skeleton className="h-[36px] w-[200px]" />;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

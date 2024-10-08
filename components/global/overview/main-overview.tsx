@@ -7,6 +7,7 @@ import { getAllTransactionData } from "../utils/transactions";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { useEffect, useState } from "react";
 import { Percent } from "lucide-react";
+import OverviewSkeleton from "./overview-skeleton";
 
 export type Transaction = {
   id: string;
@@ -48,6 +49,10 @@ export default function MainOverview() {
       });
     }
   }, [transactions, getDateRange]);
+
+  if (!transactions) {
+    return <OverviewSkeleton />;
+  }
 
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">
