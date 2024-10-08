@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Button } from "@/components/ui/button";
 import SettingsCard from "./elements/settings-card";
 import { useTheme } from "next-themes";
 import { useThemeContext } from "@/components/providers/theme-provider";
@@ -74,7 +73,6 @@ export default function AppearanceSettings() {
           <SelectContent>
             <SelectItem value="dark">Dark</SelectItem>
             <SelectItem value="light">Light</SelectItem>
-            <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -98,7 +96,11 @@ export default function AppearanceSettings() {
               <RadioGroupItem value={name} id={name} className="sr-only" />
               <div
                 className={`p-1 rounded-lg group-hover:bg-muted-foreground/40 transition-colors duration-300 ${
-                  themeColor === name ? "ring-2 ring-white" : ""
+                  themeColor === name
+                    ? `ring-2 ${
+                        theme === "light" ? "ring-black" : "ring-white"
+                      }`
+                    : ""
                 }`}
               >
                 <div
@@ -120,9 +122,8 @@ export default function AppearanceSettings() {
           htmlFor="theme"
           className="text-muted-foreground my-auto font-normal"
         >
-          Update your appearance settings.
+          These settings are applied globally and are saved locally.
         </Label>
-        <Button className="w-fit">Update appearance</Button>
       </div>
     </SettingsCard>
   );

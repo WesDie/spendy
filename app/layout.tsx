@@ -21,8 +21,7 @@ export default function RootLayout({
       <body className={`${inter.className} flex max-h-dvh min-h-dvh w-full`}>
         <NextThemesProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
           disableTransitionOnChange
         >
           <ThemeDataProvider>
