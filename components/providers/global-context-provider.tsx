@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   addMonths,
   subMonths,
@@ -19,6 +19,12 @@ type Group = {
   type: "Personal" | "External";
 };
 
+type User = {
+  id: string;
+  email: string;
+  name: string;
+};
+
 type DateOption = "month" | "halfyear" | "year" | "total";
 
 type GlobalContextType = {
@@ -34,6 +40,8 @@ type GlobalContextType = {
   getDateRange: () => { startDate: Date; endDate: Date };
   isNextDateDisabled: () => boolean;
   isPrevDateDisabled: () => boolean;
+  user: User | null;
+  setUser: (user: User | null) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -56,6 +64,16 @@ export function GlobalContextProvider({
   const [currentGroup, setCurrentGroup] = useState<Group | null>(null);
   const [activeDateOption, setActiveDateOption] = useState<DateOption>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await fetch("/api/auth/getUser");
+      const data = await response.json();
+      setUser(data);
+    };
+    fetchUser();
+  }, []);
 
   const handleDatePrev = () => {
     switch (activeDateOption) {
@@ -165,6 +183,8 @@ export function GlobalContextProvider({
         getDateRange,
         isNextDateDisabled,
         isPrevDateDisabled,
+        user,
+        setUser,
       }}
     >
       {children}

@@ -4,22 +4,72 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import SettingsCard from "./elements/settings-card";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { useState } from "react";
+import { AlertCircle } from "lucide-react";
 
 export default function AccountSettings() {
+  const { user } = useGlobalContext();
+
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+
+  const [passwordFormData, setPasswordFormData] = useState({
+    currentPassword: "",
+    newPassword: "",
+  });
+  const [passwordError, setPasswordError] = useState({
+    message: "",
+    fields: [] as string[],
+  });
+
+  const handleChangePassword = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    fetch("/api/auth/changePassword", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(passwordFormData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          setPasswordError(data.error);
+        } else {
+          setPasswordError({
+            message: "",
+            fields: [],
+          });
+          setPasswordSuccess("Password changed successfully");
+          setPasswordFormData({
+            currentPassword: "",
+            newPassword: "",
+          });
+
+          setTimeout(() => {
+            setPasswordSuccess(null);
+          }, 5000);
+        }
+      });
+  };
+
   return (
     <>
       <SettingsCard
         title="Email"
         description="Your email used by this account."
       >
-        <Input
-          type="text"
-          id="email"
-          placeholder="Enter your email"
-          className="w-[400px]"
-          disabled
-          value="wesdie@gmail.com"
-        />
+        {user && (
+          <Input
+            type="text"
+            id="email"
+            placeholder="Enter your email"
+            className="w-[400px]"
+            disabled
+            value={user?.email}
+          />
+        )}
         <Separator />
         <div className="flex justify-between gap-2 h-9">
           <Label
@@ -29,25 +79,66 @@ export default function AccountSettings() {
             Your email is used to log in to your account. An email can only be
             changed via support.
           </Label>
-          <Button className="w-fit" disabled>
-            Change email
-          </Button>
         </div>
       </SettingsCard>
-      <SettingsCard title="Password" description="Change your password.">
+      <SettingsCard
+        title="Password"
+        description="Change your password."
+        isForm
+        handleSubmit={handleChangePassword}
+      >
+        {passwordError.message && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Password change failed</AlertTitle>
+            <AlertDescription>{passwordError.message}</AlertDescription>
+          </Alert>
+        )}
+        {passwordSuccess && (
+          <Alert variant="success">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Password changed successfully</AlertTitle>
+            <AlertDescription>{passwordSuccess}</AlertDescription>
+          </Alert>
+        )}
+        <Input
+          type="text"
+          id="username"
+          disabled
+          value={user?.email}
+          autoComplete="username"
+          className="hidden"
+        />
+
         <Input
           type="password"
           id="current-password"
           placeholder="Enter your current password"
           className="w-[400px]"
-          disabled
+          autoComplete="current-password"
+          value={passwordFormData.currentPassword}
+          onChange={(e) =>
+            setPasswordFormData({
+              ...passwordFormData,
+              currentPassword: e.target.value,
+            })
+          }
+          error={passwordError.fields.includes("currentPassword")}
         />
         <Input
           type="password"
           id="password"
           placeholder="Enter your new password"
           className="w-[400px]"
-          disabled
+          autoComplete="new-password"
+          value={passwordFormData.newPassword}
+          onChange={(e) =>
+            setPasswordFormData({
+              ...passwordFormData,
+              newPassword: e.target.value,
+            })
+          }
+          error={passwordError.fields.includes("newPassword")}
         />
         <Separator />
         <div className="flex justify-between gap-2 h-9">
@@ -57,7 +148,12 @@ export default function AccountSettings() {
           >
             Your password is used to log in to your account.
           </Label>
-          <Button className="w-fit" disabled>
+          <Button
+            className="w-fit"
+            disabled={
+              !passwordFormData.currentPassword || !passwordFormData.newPassword
+            }
+          >
             Change password
           </Button>
         </div>
@@ -70,7 +166,7 @@ export default function AccountSettings() {
             placeholder="Enter your first name"
             className="w-[200px]"
             disabled
-            value="Wes"
+            value="First name"
           />
           <Input
             type="text"
@@ -78,7 +174,7 @@ export default function AccountSettings() {
             placeholder="Enter your last name"
             className="w-[200px]"
             disabled
-            value="Dieleman"
+            value="Last name"
           />
         </div>
         <Separator />
@@ -94,19 +190,6 @@ export default function AccountSettings() {
           </Button>
         </div>
       </SettingsCard>
-      <Alert variant="destructive" className="flex flex-col gap-4 p-6">
-        <AlertTitle className="text-lg font-semibold text-foreground">
-          Delete account
-        </AlertTitle>
-        <AlertDescription className="text-sm text-muted-foreground">
-          Deleting your account is irreversible and will remove all of your data
-          from our servers.
-        </AlertDescription>
-        <Separator />
-        <Button variant="destructive" className="w-fit" disabled>
-          Delete account
-        </Button>
-      </Alert>
     </>
   );
 }
