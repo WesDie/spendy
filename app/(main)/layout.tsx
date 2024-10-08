@@ -12,7 +12,7 @@ export default function RootLayout({
     <GlobalContextProvider>
       <DialogProvider>
         <CommandMenuProvider>
-          <main className="w-full flex flex-col">
+          <main className="w-full h-full flex flex-col pt-20">
             <TopNavBar />
             {children}
           </main>

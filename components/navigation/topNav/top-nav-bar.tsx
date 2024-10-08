@@ -8,7 +8,7 @@ import { Profile } from "./profile";
 export function TopNavBar() {
   return (
     <>
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4 border-b fixed top-0 left-0 right-0 z-50 bg-background">
         <div className="flex items-center gap-4">
           <GroupSelector />
           <Links type="desktop" />

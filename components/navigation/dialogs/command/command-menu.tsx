@@ -29,7 +29,7 @@ import {
   DialogType,
 } from "@/components/providers/command-menu-provider";
 import { useDialogs } from "@/components/providers/dialogs-provider";
-
+import { useRouter } from "next/navigation";
 export function CommandMenu({
   dialogType,
   onOpenChange,
@@ -40,6 +40,7 @@ export function CommandMenu({
   const { theme, setTheme } = useTheme();
   const { openDialog } = useCommandMenu();
   const { openDialog: openCreateDialog } = useDialogs();
+  const router = useRouter();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -72,7 +73,12 @@ export function CommandMenu({
               <span>My Groups</span>
               <CommandShortcut>⌘1</CommandShortcut>
             </CommandItem>
-            <CommandItem disabled>
+            <CommandItem
+              onSelect={() => {
+                router.push("/settings");
+                openDialog(null);
+              }}
+            >
               <SettingsIcon className="mr-2 h-4 w-4" />
               <span>Settings</span>
               <CommandShortcut>⌘S</CommandShortcut>

@@ -66,10 +66,12 @@ export function Profile() {
             <span>Profile</span>
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          <DropdownMenuItem>
+            <Link href="/settings" className="w-full flex items-center">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
