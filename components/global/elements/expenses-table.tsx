@@ -161,6 +161,12 @@ export default function TransactionTable({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 25,
+      },
+    },
     state: {
       sorting,
       columnFilters,
@@ -172,10 +178,8 @@ export default function TransactionTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Transactions</CardTitle>
-        <CardDescription>
-          View all your transactions in one place.
-        </CardDescription>
+        <CardTitle>Latest transactions</CardTitle>
+        <CardDescription>View of all your latest transactions.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="w-full">
