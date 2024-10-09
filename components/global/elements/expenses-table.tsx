@@ -13,7 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronDown,
+  Plus,
+} from "lucide-react";
 
 import {
   Card,
@@ -40,6 +46,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Transaction } from "@/components/global/overview/main-overview";
+import { useDialogs } from "@/components/providers/dialogs-provider";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -149,6 +156,7 @@ export default function TransactionTable({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const { openDialog } = useDialogs();
 
   const table = useReactTable({
     data: transactions,
@@ -195,6 +203,13 @@ export default function TransactionTable({
               className="max-w-sm"
             />
             <div className="ml-auto flex flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={() => openDialog("transactionDialog")}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add transaction
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="ml-auto">

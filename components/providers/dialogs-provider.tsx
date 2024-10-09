@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { GroupDialog } from "../navigation/dialogs/create/group-dialog";
+import { TransactionDialog } from "../navigation/dialogs/create/transaction-dialog";
 
 type DialogState = {
   [key: string]: boolean;
@@ -30,7 +31,7 @@ type DialogProviderProps = {
 export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
   const [dialogState, setDialogState] = useState<DialogState>({
     groupDialog: false,
-    // Add more dialogs
+    transactionDialog: false,
   });
 
   const openDialog = (dialogName: string) => {
@@ -47,6 +48,10 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
       <GroupDialog
         open={dialogState.groupDialog}
         onClose={() => closeDialog("groupDialog")}
+      />
+      <TransactionDialog
+        open={dialogState.transactionDialog}
+        onClose={() => closeDialog("transactionDialog")}
       />
     </DialogContext.Provider>
   );
