@@ -15,7 +15,10 @@ export default function OverviewSkeleton() {
           <Skeleton className="w-full h-[110px]" />
         </div>
         <Skeleton className="w-full h-[300px]" />
-        <Skeleton className="w-full h-[650px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="w-full h-[300px]" />
+          <Skeleton className="w-full h-[300px]" />
+        </div>
       </div>
     </div>
   );

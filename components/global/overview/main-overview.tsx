@@ -1,7 +1,7 @@
 import { DatePickerWithRange } from "../elements/date-range-picker";
 import InformationCard from "../elements/information-card";
 import FinanceChart from "../elements/finance-chart";
-import ExpenseTable from "../elements/transaction-table";
+import LatestTransactions from "../elements/latest-transactions";
 import { useQuery } from "@tanstack/react-query";
 import { getAllTransactionData } from "../utils/transactions";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
@@ -85,7 +85,9 @@ export default function MainOverview() {
           />
         </div>
         {transactions && <FinanceChart transactions={transactions} />}
-        {transactions && <ExpenseTable transactions={transactions} />}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {transactions && <LatestTransactions transactions={transactions} />}
+        </div>
       </div>
     </div>
   );
