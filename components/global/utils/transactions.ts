@@ -14,8 +14,8 @@ export function getAllTransactionData(
   const totalIncome = transactions.reduce(
     (acc: number, transaction: Transaction) => {
       return transaction.amount > 0 &&
-        new Date(transaction.created_at) >= timeframe.startDate &&
-        new Date(transaction.created_at) <= timeframe.endDate
+        new Date(transaction.date) >= timeframe.startDate &&
+        new Date(transaction.date) <= timeframe.endDate
         ? acc + transaction.amount
         : acc;
     },
@@ -25,8 +25,8 @@ export function getAllTransactionData(
   const totalSpend = transactions.reduce(
     (acc: number, transaction: Transaction) => {
       return transaction.amount < 0 &&
-        new Date(transaction.created_at) >= timeframe.startDate &&
-        new Date(transaction.created_at) <= timeframe.endDate
+        new Date(transaction.date) >= timeframe.startDate &&
+        new Date(transaction.date) <= timeframe.endDate
         ? acc + transaction.amount
         : acc;
     },

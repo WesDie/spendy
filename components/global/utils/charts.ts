@@ -7,8 +7,8 @@ export const generateDailyData = (
   const dateMap = new Map();
 
   data.forEach((item) => {
-    const date = new Date(item.created_at);
-    date.setDate(date.getDate() + 1);
+    const date = new Date(item.date);
+    date.setDate(date.getDate());
     const dateString = date.toDateString();
     if (dateMap.has(dateString)) {
       const existingItem = dateMap.get(dateString);
@@ -69,7 +69,7 @@ export const aggregateData = (
       key = new Date(
         date.getFullYear(),
         date.getMonth(),
-        date.getDate() - (index % aggregationDays)
+        date.getDate() - (index % aggregationDays) + 1
       )
         .toISOString()
         .split("T")[0];
@@ -114,12 +114,13 @@ export const getTimeFormat = (activeDateOption: string) => {
 export const firstTransactionDate = (data: any[]) =>
   new Date(
     data.reduce((earliest: Date, item: any) => {
-      const date = new Date(item.created_at);
+      const date = new Date(item.date);
       return date < earliest ? date : earliest;
     }, new Date())
   );
 
 export const today = new Date();
+today.setDate(today.getDate() + 1);
 
 export const getDailyChartData = (data: any[]) =>
   generateDailyData(firstTransactionDate(data), today, data);

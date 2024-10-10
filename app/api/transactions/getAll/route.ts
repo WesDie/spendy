@@ -18,5 +18,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json([], { status: 500 });
   }
 
+  if (transactions.length === 0) {
+    return NextResponse.json([], { status: 200 });
+  }
+
   return NextResponse.json(transactions, { status: 200 });
 }

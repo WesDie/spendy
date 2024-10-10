@@ -12,11 +12,12 @@ import OverviewSkeleton from "./overview-skeleton";
 export type Transaction = {
   id: string;
   amount: number;
-  created_at: Date;
+  date: Date;
   title: string;
   type: string;
   user_id: string;
   category: string;
+  created_at: Date;
 };
 
 export default function MainOverview() {
@@ -24,6 +25,7 @@ export default function MainOverview() {
     queryKey: ["transactions"],
     queryFn: () => fetch("/api/transactions/getAll").then((res) => res.json()),
   });
+
   const { getDateRange } = useGlobalContext();
   const [transactionData, setTransactionData] = useState({
     totalBalance: null,

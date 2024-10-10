@@ -78,6 +78,10 @@ export default function FinanceChart({
     }
 
     // Fill in data for all days in the range
+    if (activeDateOption === "total") {
+      endDate = new Date(new Date().setDate(new Date().getDate() + 1));
+    }
+
     const filledData: any[] = [];
     const endTime = endDate.getTime();
     const dailyChartMap = new Map(
@@ -134,7 +138,13 @@ export default function FinanceChart({
       aggregationDays
     );
     setActiveChartData(aggregatedData as any);
-  }, [activeDateOption, getDateRange, activeView, aggregationType]);
+  }, [
+    activeDateOption,
+    getDateRange,
+    activeView,
+    aggregationType,
+    transactions,
+  ]);
 
   const handleViewChange = (view: string) => {
     setActiveView(view as "incomeExpenses" | "balance");
