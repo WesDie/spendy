@@ -42,9 +42,9 @@ export default function NotificationSettings() {
         </Card>
         <Card className="flex justify-between">
           <CardHeader>
-            <CardTitle>Marketing emails</CardTitle>
+            <CardTitle>Newsletter emails</CardTitle>
             <CardDescription>
-              Receive marketing emails from the platform.
+              Receive newsletter emails from the platform.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex h-fit p-0 pr-6 my-auto">
