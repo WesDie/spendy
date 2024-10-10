@@ -13,9 +13,11 @@ export function getAllTransactionData(
 
   const totalIncome = transactions.reduce(
     (acc: number, transaction: Transaction) => {
+      const transactionDate = new Date(transaction.date);
+      transactionDate.setDate(transactionDate.getDate() - 1); // Retract transaction date by one day
       return transaction.amount > 0 &&
-        new Date(transaction.date) >= timeframe.startDate &&
-        new Date(transaction.date) <= timeframe.endDate
+        transactionDate >= timeframe.startDate &&
+        transactionDate <= timeframe.endDate
         ? acc + transaction.amount
         : acc;
     },
@@ -24,9 +26,11 @@ export function getAllTransactionData(
 
   const totalSpend = transactions.reduce(
     (acc: number, transaction: Transaction) => {
+      const transactionDate = new Date(transaction.date);
+      transactionDate.setDate(transactionDate.getDate() - 1); // Retract transaction date by one day
       return transaction.amount < 0 &&
-        new Date(transaction.date) >= timeframe.startDate &&
-        new Date(transaction.date) <= timeframe.endDate
+        transactionDate >= timeframe.startDate &&
+        transactionDate <= timeframe.endDate
         ? acc + transaction.amount
         : acc;
     },
