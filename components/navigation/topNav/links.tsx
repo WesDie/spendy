@@ -16,8 +16,8 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
         Overview
       </Link>
       <Link
-        href="/"
-        className="text-muted-foreground pointer-events-none opacity-50 transition-colors hover:text-foreground"
+        href="/transactions"
+        className="text-muted-foreground transition-colors hover:text-foreground"
       >
         Transactions
       </Link>

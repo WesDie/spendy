@@ -1,7 +1,7 @@
 import { DatePickerWithRange } from "../elements/date-range-picker";
 import InformationCard from "../elements/information-card";
 import FinanceChart from "../elements/finance-chart";
-import ExpenseTable from "../elements/expenses-table";
+import ExpenseTable from "../elements/transaction-table";
 import { useQuery } from "@tanstack/react-query";
 import { getAllTransactionData } from "../utils/transactions";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
@@ -60,7 +60,7 @@ export default function MainOverview() {
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">
       <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
-        <h3 className="text-3xl font-semibold">Dashboard</h3>
+        <h3 className="text-3xl font-semibold">Overview</h3>
         <DatePickerWithRange />
       </div>
       <div className="flex flex-col gap-4">

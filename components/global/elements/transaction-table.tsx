@@ -172,7 +172,7 @@ export default function TransactionTable({
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 25,
+        pageSize: 50,
       },
     },
     state: {
@@ -186,8 +186,8 @@ export default function TransactionTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Latest transactions</CardTitle>
-        <CardDescription>View of all your latest transactions.</CardDescription>
+        <CardTitle>All transactions</CardTitle>
+        <CardDescription>View of all your transactions.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="w-full">
