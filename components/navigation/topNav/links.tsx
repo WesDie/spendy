@@ -19,7 +19,19 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
         href="/"
         className="text-muted-foreground pointer-events-none opacity-50 transition-colors hover:text-foreground"
       >
-        Projects
+        Transactions
+      </Link>
+      <Link
+        href="/"
+        className="text-muted-foreground pointer-events-none opacity-50 transition-colors hover:text-foreground"
+      >
+        Categories
+      </Link>
+      <Link
+        href="/"
+        className="text-muted-foreground pointer-events-none opacity-50 transition-colors hover:text-foreground"
+      >
+        Recurring
       </Link>
       <Link
         href="/"
