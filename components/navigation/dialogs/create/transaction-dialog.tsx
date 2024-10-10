@@ -68,12 +68,13 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
 
   const handleCreate = () => {
     setIsSubmitting(true);
-    fetch("/api/groups/add", {
+    fetch("/api/transactions/add", {
       method: "POST",
       body: JSON.stringify({
-        groupData: {
+        transactionData: {
           title: formData.title,
           amount: formData.amount,
+          type: formData.type,
           date: formData.date,
         },
       }),
@@ -183,9 +184,11 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
                 <Calendar
                   mode="single"
                   selected={formData.date}
-                  onSelect={(date) =>
-                    setFormData({ ...formData, date: date || new Date() })
-                  }
+                  onSelect={(date) => {
+                    const newDate = date || new Date();
+                    newDate.setHours(12, 0, 0, 0);
+                    setFormData({ ...formData, date: newDate });
+                  }}
                   initialFocus
                 />
                 <div className="flex w-full justify-between px-4">

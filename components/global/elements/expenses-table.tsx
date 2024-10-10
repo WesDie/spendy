@@ -76,7 +76,7 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "created_at",
+    accessorKey: "date",
     header: ({ column }) => {
       return (
         <Button
@@ -95,7 +95,7 @@ export const columns: ColumnDef<Transaction>[] = [
       );
     },
     cell: ({ row }) => {
-      const date = new Date(row.getValue("created_at"));
+      const date = new Date(row.getValue("date"));
       const formatted = date.toLocaleString("en-US", { timeZone: "UTC" });
       return <div>{formatted}</div>;
     },
