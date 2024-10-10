@@ -22,8 +22,9 @@ export type Transaction = {
 
 export default function MainOverview() {
   const { data: transactions, error: transactionsError } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => fetch("/api/transactions/getAll").then((res) => res.json()),
+    queryKey: ["transactions", 17],
+    queryFn: () =>
+      fetch(`/api/transactions/getAll?groupId=17`).then((res) => res.json()),
   });
 
   const { getDateRange } = useGlobalContext();

@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 type TransactionDialogProps = {
   open: boolean;
@@ -40,11 +41,14 @@ type TransactionDialogProps = {
 };
 
 export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
+  const { currentGroup } = useGlobalContext();
+
   const [formData, setFormData] = useState({
     title: "",
     amount: 0,
     type: "expense",
     date: new Date(new Date().setSeconds(0)),
+    group: currentGroup?.id,
   });
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,11 +64,12 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
         amount: 0,
         type: "expense",
         date: new Date(new Date().setSeconds(0)),
+        group: currentGroup?.id,
       });
       setIsSubmitting(false);
       setError({ message: "", fields: [] });
     }
-  }, [open]);
+  }, [open, currentGroup]);
 
   const handleCreate = () => {
     setIsSubmitting(true);
@@ -76,6 +81,7 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
           amount: formData.amount,
           type: formData.type,
           date: formData.date,
+          group: formData.group,
         },
       }),
     })

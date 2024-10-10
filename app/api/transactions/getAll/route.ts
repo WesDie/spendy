@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const groupId = searchParams.get("groupId");
+
   const supabase = createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
 
@@ -12,7 +15,8 @@ export async function GET(req: NextRequest) {
   const { data: transactions, error: transactionsError } = await supabase
     .from("spendy_transactions")
     .select("*")
-    .eq("user_id", userData?.user?.id ?? "");
+    .eq("user_id", userData?.user?.id ?? "")
+    .eq("group", groupId ?? "");
 
   if (transactionsError) {
     return NextResponse.json([], { status: 500 });

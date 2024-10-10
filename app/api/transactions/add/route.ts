@@ -35,6 +35,7 @@ export async function POST(req: Request) {
     amount: transactionData.amount,
     date: transactionData.date,
     category: "Test",
+    group: transactionData.group,
   });
 
   if (error) {
