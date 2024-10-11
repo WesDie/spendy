@@ -13,13 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  ChevronDown,
-  Plus,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Plus } from "lucide-react";
 
 import {
   Card,
@@ -30,12 +24,6 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -46,13 +34,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Transaction } from "@/components/global/overview/main-overview";
+import { Category } from "@/components/global/elements/categories-card";
 import { useDialogs } from "@/components/providers/dialogs-provider";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "category",
     header: "Category",
-    cell: ({ row }) => <div>{row.getValue("category")}</div>,
+    cell: ({ row }) => (
+      <div>
+        {row.getValue("category")
+          ? `${(row.getValue("category") as Category).icon} ${
+              (row.getValue("category") as Category).title
+            }`
+          : "---"}
+      </div>
+    ),
   },
   {
     accessorKey: "title",
@@ -159,7 +156,7 @@ export default function TransactionTable({
   const { openDialog } = useDialogs();
 
   const table = useReactTable({
-    data: transactions,
+    data: transactions as Transaction[],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -210,25 +207,6 @@ export default function TransactionTable({
                 <Plus className="mr-2 h-4 w-4" />
                 Add transaction
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="ml-auto">
-                    Category <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {transactions.map((transaction) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={transaction.id}
-                        className="capitalize"
-                      >
-                        {transaction.category}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
           <div className="rounded-md border">

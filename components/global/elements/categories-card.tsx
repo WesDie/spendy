@@ -30,7 +30,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { firstTransactionDate } from "@/components/global/utils/charts";
 
-type Category = {
+export type Category = {
   budget: number;
   color: string;
   created_at: string;
@@ -78,7 +78,7 @@ export function CategoriesCard({
     return categories
       .map((category: Category) => {
         const totalSpent = filteredTransactions
-          .filter((t) => t.category === category.id)
+          .filter((t) => t.category?.id === category.id)
           .reduce((sum, t) => sum + t.amount, 0);
 
         const adjustedBudget = category.budget * monthsInRange;

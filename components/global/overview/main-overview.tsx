@@ -17,10 +17,19 @@ export type Transaction = {
   title: string;
   type: string;
   user_id: string;
-  category: number;
   created_at: Date;
   upcoming: number;
   recurring: boolean;
+  category: {
+    id: number;
+    created_at: Date;
+    title: string;
+    color: string;
+    budget: number;
+    type: string;
+    group: number;
+    icon: string;
+  };
 };
 
 export default function MainOverview() {
