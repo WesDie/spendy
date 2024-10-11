@@ -37,7 +37,8 @@ export default function LatestTransactions({
           <div key={transaction.id} className="flex items-center space-x-4">
             <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <span role="img" aria-label="category icon" className="text-lg">
-                💰
+                {transaction.category?.icon ||
+                  (transaction.amount > 0 ? "+" : "-")}
               </span>
             </div>
             <div className="flex-grow">
