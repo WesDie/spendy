@@ -50,6 +50,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import TransactionSheet from "@/components/navigation/sheet/edit/transaction-sheet";
+import { DeleteTransactionDialog } from "@/components/navigation/dialogs/alert/delete-transaction-dialog";
 
 export const getColumns = (): ColumnDef<Transaction>[] => [
   {
@@ -160,12 +161,19 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
       const transaction = row.original;
       const [isTransactionSheetOpen, setIsTransactionSheetOpen] =
         React.useState(false);
+      const [isDeleteTransactionDialogOpen, setIsDeleteTransactionDialogOpen] =
+        React.useState(false);
 
       return (
         <>
           <TransactionSheet
             open={isTransactionSheetOpen}
             onClose={() => setIsTransactionSheetOpen(false)}
+            transaction={transaction}
+          />
+          <DeleteTransactionDialog
+            open={isDeleteTransactionDialogOpen}
+            onClose={() => setIsDeleteTransactionDialogOpen(false)}
             transaction={transaction}
           />
           <DropdownMenu>
@@ -179,13 +187,16 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(transaction.id)}
               >
-                Copy transaction ID
+                Copy ID
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsTransactionSheetOpen(true)}>
                 Edit transaction
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-500" disabled>
+              <DropdownMenuItem
+                className="text-red-500"
+                onClick={() => setIsDeleteTransactionDialogOpen(true)}
+              >
                 Delete transaction
               </DropdownMenuItem>
             </DropdownMenuContent>
