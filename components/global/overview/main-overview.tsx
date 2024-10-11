@@ -8,6 +8,7 @@ import { useGlobalContext } from "@/components/providers/global-context-provider
 import { useEffect, useState } from "react";
 import { Percent } from "lucide-react";
 import OverviewSkeleton from "./overview-skeleton";
+import { CategoriesCard } from "../elements/categories-card";
 
 export type Transaction = {
   id: string;
@@ -16,8 +17,10 @@ export type Transaction = {
   title: string;
   type: string;
   user_id: string;
-  category: string;
+  category: number;
   created_at: Date;
+  upcoming: number;
+  recurring: boolean;
 };
 
 export default function MainOverview() {
@@ -87,6 +90,7 @@ export default function MainOverview() {
         {transactions && <FinanceChart transactions={transactions} />}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {transactions && <LatestTransactions transactions={transactions} />}
+          {transactions && <CategoriesCard transactions={transactions} />}
         </div>
       </div>
     </div>
