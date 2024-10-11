@@ -34,10 +34,10 @@ import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  TableCell,
 } from "@/components/ui/table";
 import { Transaction } from "@/components/global/overview/main-overview";
 import { Category } from "@/components/global/elements/categories-card";
@@ -49,10 +49,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import TransactionSheet from "@/components/navigation/sheet/edit/transaction-sheet";
 
-export const getColumns = (
-  openDialog: (dialog: string) => void
-): ColumnDef<Transaction>[] => [
+export const getColumns = (): ColumnDef<Transaction>[] => [
   {
     accessorKey: "category",
     header: "Category",
@@ -157,35 +156,41 @@ export const getColumns = (
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: function Cell({ row }) {
       const transaction = row.original;
+      const [isTransactionSheetOpen, setIsTransactionSheetOpen] =
+        React.useState(false);
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(transaction.id)}
-            >
-              Copy transaction ID
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => openDialog("transactionDialog")}
-              disabled
-            >
-              Edit transaction
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500" disabled>
-              Delete transaction
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <TransactionSheet
+            open={isTransactionSheetOpen}
+            onClose={() => setIsTransactionSheetOpen(false)}
+            transaction={transaction}
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(transaction.id)}
+              >
+                Copy transaction ID
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsTransactionSheetOpen(true)}>
+                Edit transaction
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-500" disabled>
+                Delete transaction
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       );
     },
   },
@@ -196,7 +201,9 @@ export default function TransactionTable({
 }: {
   transactions: Transaction[];
 }) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "date", desc: true },
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -205,8 +212,7 @@ export default function TransactionTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const { openDialog } = useDialogs();
 
-  // Use getColumns function to create columns with openDialog
-  const columns = React.useMemo(() => getColumns(openDialog), [openDialog]);
+  const columns = React.useMemo(() => getColumns(), []);
 
   const table = useReactTable({
     data: transactions as Transaction[],
@@ -224,6 +230,7 @@ export default function TransactionTable({
         pageIndex: 0,
         pageSize: 50,
       },
+      sorting: sorting,
     },
     state: {
       sorting,
