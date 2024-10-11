@@ -13,7 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Plus } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  MoreHorizontal,
+  Plus,
+} from "lucide-react";
 
 import {
   Card,
@@ -36,8 +42,17 @@ import {
 import { Transaction } from "@/components/global/overview/main-overview";
 import { Category } from "@/components/global/elements/categories-card";
 import { useDialogs } from "@/components/providers/dialogs-provider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-export const columns: ColumnDef<Transaction>[] = [
+export const getColumns = (
+  openDialog: (dialog: string) => void
+): ColumnDef<Transaction>[] => [
   {
     accessorKey: "category",
     header: "Category",
@@ -139,6 +154,41 @@ export const columns: ColumnDef<Transaction>[] = [
       return <div className={`text-right ${color}`}>{formatted}</div>;
     },
   },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const transaction = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(transaction.id)}
+            >
+              Copy transaction ID
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => openDialog("transactionDialog")}
+              disabled
+            >
+              Edit transaction
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-500" disabled>
+              Delete transaction
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
 ];
 
 export default function TransactionTable({
@@ -154,6 +204,9 @@ export default function TransactionTable({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const { openDialog } = useDialogs();
+
+  // Use getColumns function to create columns with openDialog
+  const columns = React.useMemo(() => getColumns(openDialog), [openDialog]);
 
   const table = useReactTable({
     data: transactions as Transaction[],
