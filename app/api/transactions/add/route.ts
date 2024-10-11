@@ -13,6 +13,24 @@ export async function POST(req: Request) {
   const supabase = createClient();
   const { transactionData } = await req.json();
 
+  if (!transactionData.type) {
+    return NextResponse.json(
+      { error: { message: "Type is required", fields: ["type"] } },
+      { status: 400 }
+    );
+  }
+
+  if (transactionData.type === "income") {
+    transactionData.category = null;
+  }
+
+  if (transactionData.type !== "income" && !transactionData.category) {
+    return NextResponse.json(
+      { error: { message: "Category is required", fields: ["category"] } },
+      { status: 400 }
+    );
+  }
+
   const errors = validateTransactionData(transactionData);
   if (errors.length > 0) {
     return NextResponse.json(
@@ -58,10 +76,6 @@ function validateTransactionData(transactionData: TransactionData) {
 
   if (!transactionData.amount) {
     errors.push("amount");
-  }
-
-  if (!transactionData.category) {
-    errors.push("category");
   }
 
   if (!transactionData.date) {

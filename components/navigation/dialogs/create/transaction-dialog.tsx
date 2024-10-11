@@ -177,27 +177,32 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Category
-            </Label>
-            <Select
-              onValueChange={(value) =>
-                setFormData({ ...formData, category: Number(value) })
-              }
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories?.map((category: Category) => (
-                  <SelectItem key={category.id} value={category.id.toString()}>
-                    {category.icon + " " + category.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {formData.type !== "income" && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Category
+              </Label>
+              <Select
+                onValueChange={(value) =>
+                  setFormData({ ...formData, category: Number(value) })
+                }
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories?.map((category: Category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id.toString()}
+                    >
+                      {category.icon + " " + category.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Date
