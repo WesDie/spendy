@@ -122,6 +122,10 @@ export function CommandMenu({
               <Plus className="mr-2 h-4 w-4" />
               <span>Create Group</span>
             </CommandItem>
+            <CommandItem onSelect={() => openCreateDialog("transactionDialog")}>
+              <Plus className="mr-2 h-4 w-4" />
+              <span>Create Transaction</span>
+            </CommandItem>
           </CommandGroup>
         </CommandList>
       </CommandDialog>
