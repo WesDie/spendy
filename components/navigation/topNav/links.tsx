@@ -22,8 +22,8 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
         Transactions
       </Link>
       <Link
-        href="/"
-        className="text-muted-foreground pointer-events-none opacity-50 transition-colors hover:text-foreground"
+        href="/categories"
+        className="text-muted-foreground transition-colors hover:text-foreground"
       >
         Categories
       </Link>
