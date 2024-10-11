@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect, useRef } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { Category } from "@/components/global/elements/categories-card";
 
 type TransactionDialogProps = {
   open: boolean;
@@ -43,12 +44,21 @@ type TransactionDialogProps = {
 export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
   const { currentGroup } = useGlobalContext();
 
+  const { data: categories } = useQuery({
+    queryKey: ["categories", currentGroup?.id],
+    queryFn: () =>
+      fetch(`/api/categories/get?groupId=${currentGroup?.id}`).then((res) =>
+        res.json()
+      ),
+  });
+
   const [formData, setFormData] = useState({
     title: "",
     amount: 0,
     type: "expense",
     date: new Date(new Date().setSeconds(0)),
     group: currentGroup?.id,
+    category: null as number | null,
   });
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,6 +75,7 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
         type: "expense",
         date: new Date(new Date().setSeconds(0)),
         group: currentGroup?.id,
+        category: null,
       });
       setIsSubmitting(false);
       setError({ message: "", fields: [] });
@@ -82,6 +93,7 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
           type: formData.type,
           date: formData.date,
           group: formData.group,
+          category: formData.category,
         },
       }),
     })
@@ -162,6 +174,27 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
               <SelectContent>
                 <SelectItem value="income">(+) Income</SelectItem>
                 <SelectItem value="expense">(-) Expense</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Category
+            </Label>
+            <Select
+              onValueChange={(value) =>
+                setFormData({ ...formData, category: Number(value) })
+              }
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories?.map((category: Category) => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.icon + " " + category.title}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

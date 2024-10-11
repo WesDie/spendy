@@ -6,6 +6,7 @@ type TransactionData = {
   amount: number;
   date: Date;
   type: string;
+  category: number;
 };
 
 export async function POST(req: Request) {
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
     title: transactionData.title,
     amount: transactionData.amount,
     date: transactionData.date,
-    category: "Test",
+    category: transactionData.category,
     group: transactionData.group,
   });
 
@@ -57,6 +58,10 @@ function validateTransactionData(transactionData: TransactionData) {
 
   if (!transactionData.amount) {
     errors.push("amount");
+  }
+
+  if (!transactionData.category) {
+    errors.push("category");
   }
 
   if (!transactionData.date) {
