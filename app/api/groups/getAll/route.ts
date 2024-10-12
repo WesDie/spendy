@@ -27,5 +27,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json([], { status: 500 });
   }
 
+  for (const group of data) {
+    const { data: imgUrl } = await supabase.storage
+      .from("icons/group_icons")
+      .getPublicUrl(`${group.icon || "default.jpg"}`);
+
+    group.icon = imgUrl.publicUrl;
+  }
+
   return NextResponse.json(data, { status: 200 });
 }

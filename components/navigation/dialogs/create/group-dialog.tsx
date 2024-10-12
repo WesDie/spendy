@@ -14,8 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 type GroupDialogProps = {
   open: boolean;
@@ -34,6 +35,7 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
   const [shareLink, setShareLink] = useState("");
   const [copied, setCopied] = useState(false);
   const router = useRouter();
+  const { setCurrentGroup } = useGlobalContext();
 
   useEffect(() => {
     if (open) {
@@ -69,7 +71,9 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
             `https://spendy-mu.vercel.app/groups/${data.groupData.id}`
           );
           queryClient.invalidateQueries({ queryKey: ["groups"] });
-          router.push(`/groups/${data.groupData.name}`);
+          router.push(`/groups/${data.groupData.id}`);
+          data.groupData.name = data.groupData.name.split(":")[0];
+          setCurrentGroup(data.groupData);
         } else {
           setError(data.error);
         }
@@ -150,6 +154,9 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
               onClick={() => handleCreate()}
               disabled={isSubmitting}
             >
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Create
             </Button>
           )}

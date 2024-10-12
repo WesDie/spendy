@@ -12,85 +12,76 @@ export async function POST(req: NextRequest) {
   const supabase = createClient();
   const { groupData } = await req.json();
 
-  const errors = validateGroupData(groupData);
-  if (errors.length > 0) {
-    return NextResponse.json(
-      { error: { message: "Validation failed", fields: errors } },
-      { status: 400 }
-    );
+  // Validate group data
+  const validationError = validateGroupData(groupData);
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) {
-    return NextResponse.json({ error: userError.message }, { status: 500 });
-  }
+  try {
+    // Get user data
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      throw new Error("User not authenticated");
+    }
 
-  const { data, error } = await supabase
-    .from("spendy_groups")
-    .insert({
-      name: groupData.name,
-      type: groupData.type,
-      icon: groupData.icon,
-    })
-    .select();
+    groupData.icon = "default.jpg";
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  if (!data[0].id) {
-    return NextResponse.json({ error: "Group ID not found" }, { status: 500 });
-  }
-
-  const { data: groupMemberData, error: groupMemberError } = await supabase
-    .from("spendy_group_members")
-    .insert({
-      group_id: data[0].id,
-      user_id: userData.user.id,
+    // Insert group and member in a single transaction
+    const { data, error } = await supabase.rpc("create_group_and_add_member", {
+      p_group_name: groupData.name,
+      p_group_type: groupData.type,
+      p_icon: groupData.icon,
+      p_user_id: userData.user.id,
     });
 
-  if (groupMemberError) {
+    if (error) throw error;
+
+    const { data: imgUrl } = await supabase.storage
+      .from("icons/group_icons")
+      .getPublicUrl(`${data?.icon || "default.jpg"}`);
+
+    data.icon = imgUrl.publicUrl;
+
+    revalidateTag("groups");
+
     return NextResponse.json(
-      { error: groupMemberError.message },
+      { message: "Success", groupData: data },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error creating group:", error);
+    return NextResponse.json(
+      { error: { message: "Internal server error" } },
       { status: 500 }
     );
   }
-
-  revalidateTag("groups");
-
-  return NextResponse.json(
-    { message: "Success", groupData: data[0] },
-    { status: 200 }
-  );
 }
 
-function validateGroupData(groupData: GroupData) {
-  const errors = [];
-
-  if (!groupData.name) {
-    errors.push("name");
-  }
-
-  if (groupData.type !== "External") {
-    errors.push("type");
-  }
-
-  if (groupData.name.toLowerCase() === "my account") {
-    errors.push("name");
-  }
+function validateGroupData(groupData: GroupData): {
+  message: string;
+  fields: string[];
+} | null {
+  if (!groupData.name)
+    return { message: "Group name is required", fields: ["name"] };
+  if (groupData.type !== "External")
+    return { message: "Invalid group type", fields: ["type"] };
+  if (groupData.name.toLowerCase() === "my account")
+    return { message: "Group name cannot be 'My Account'", fields: ["name"] };
 
   const invalidChars = [":", "/", "\\", "?", "%", "*", "|", "<", ">", '"', " "];
-  if (invalidChars.some((char) => groupData.name.includes(char))) {
-    errors.push("name");
-  }
+  if (invalidChars.some((char) => groupData.name.includes(char)))
+    return { message: "Invalid characters in group name", fields: ["name"] };
+  if (groupData.name.length > 32)
+    return {
+      message: "Group name must be less than 32 characters",
+      fields: ["name"],
+    };
+  if (groupData.name.length < 3)
+    return {
+      message: "Group name must be at least 3 characters",
+      fields: ["name"],
+    };
 
-  if (groupData.name.length > 32) {
-    errors.push("name");
-  }
-
-  if (groupData.name.length < 3) {
-    errors.push("name");
-  }
-
-  return errors;
+  return null;
 }

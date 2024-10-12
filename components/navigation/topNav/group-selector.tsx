@@ -106,89 +106,95 @@ export function GroupSelector() {
                     },
                     {}
                   )
-                ).map((category, index) => (
-                  <React.Fragment key={category}>
-                    <CommandGroup heading={category}>
-                      {groups
-                        .filter((group) => group.type === category)
-                        .map((group) => {
-                          const duplicateIndex =
-                            groups.filter((g) => g.name === group.name).length >
-                            1
-                              ? groups
-                                  .filter((g) => g.name === group.name)
-                                  .indexOf(group) + 1
-                              : "";
-                          return (
-                            <CommandItem
-                              key={group.id}
-                              value={group.id.toString()}
-                              onSelect={() => {
-                                setCurrentGroup(group);
-                                if (group.type === "Personal") {
-                                  router.push("/");
-                                } else {
-                                  router.push(
-                                    `/groups/${group.name}${
-                                      duplicateIndex ? `:${duplicateIndex}` : ""
-                                    }`
-                                  );
+                )
+                  .sort((a, b) =>
+                    a === "Personal" ? -1 : b === "Personal" ? 1 : 0
+                  )
+                  .map((category, index) => (
+                    <React.Fragment key={category}>
+                      <CommandGroup heading={category}>
+                        {groups
+                          .filter((group) => group.type === category)
+                          .map((group) => {
+                            const duplicateIndex =
+                              groups.filter((g) => g.name === group.name)
+                                .length > 1
+                                ? groups
+                                    .filter((g) => g.name === group.name)
+                                    .indexOf(group) + 1
+                                : "";
+                            return (
+                              <CommandItem
+                                key={group.id}
+                                value={group.id.toString()}
+                                onSelect={() => {
+                                  setCurrentGroup(group);
+                                  if (group.type === "Personal") {
+                                    router.push("/");
+                                  } else {
+                                    router.push(
+                                      `/groups/${group.name}${
+                                        duplicateIndex
+                                          ? `:${duplicateIndex}`
+                                          : ""
+                                      }`
+                                    );
+                                  }
+                                  setOpen(false);
+                                }}
+                                className="justify-between"
+                              >
+                                <div className="flex items-center">
+                                  <Avatar className="w-4 h-4 mr-2">
+                                    <AvatarImage src={group.icon} />
+                                    <AvatarFallback>
+                                      {group.name[0].toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  {group.name}
+                                  {duplicateIndex ? ` (${duplicateIndex})` : ""}
+                                </div>
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    currentGroup?.id === group.id
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            );
+                          })}
+                        {index ===
+                          Object.keys(
+                            groups.reduce(
+                              (
+                                acc: { [key: string]: (typeof group)[] },
+                                group
+                              ) => {
+                                if (!acc[group.type]) {
+                                  acc[group.type] = [];
                                 }
-                                setOpen(false);
-                              }}
-                              className="justify-between"
+                                acc[group.type].push(group);
+                                return acc;
+                              },
+                              {}
+                            )
+                          ).length -
+                            1 && (
+                          <>
+                            <CommandSeparator className="my-2" />
+                            <CommandItem
+                              onSelect={() => openDialog("groupDialog")}
                             >
-                              <div className="flex items-center">
-                                <Avatar className="w-4 h-4 mr-2">
-                                  <AvatarImage src={group.icon} />
-                                  <AvatarFallback>
-                                    {group.name[0].toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                {group.name}
-                                {duplicateIndex ? ` (${duplicateIndex})` : ""}
-                              </div>
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  currentGroup?.id === group.id
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
+                              <Plus className="mr-2 h-4 w-4" />
+                              Create New
                             </CommandItem>
-                          );
-                        })}
-                      {index ===
-                        Object.keys(
-                          groups.reduce(
-                            (
-                              acc: { [key: string]: (typeof group)[] },
-                              group
-                            ) => {
-                              if (!acc[group.type]) {
-                                acc[group.type] = [];
-                              }
-                              acc[group.type].push(group);
-                              return acc;
-                            },
-                            {}
-                          )
-                        ).length -
-                          1 && (
-                        <>
-                          <CommandSeparator className="my-2" />
-                          <CommandItem
-                            onSelect={() => openDialog("groupDialog")}
-                          >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Create New
-                          </CommandItem>
-                        </>
-                      )}
-                    </CommandGroup>
-                  </React.Fragment>
-                ))}
+                          </>
+                        )}
+                      </CommandGroup>
+                    </React.Fragment>
+                  ))}
               </>
             )}
           </CommandList>
