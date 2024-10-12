@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Category } from "@/components/global/elements/categories-card";
-import { Transaction } from "@/components/global/overview/main-overview";
+import { Category, Transaction } from "@/types/database-types";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";

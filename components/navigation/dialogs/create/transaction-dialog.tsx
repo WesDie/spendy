@@ -34,7 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
-import { Category } from "@/components/global/elements/categories-card";
+import { Category } from "@/types/database-types";
 
 type TransactionDialogProps = {
   open: boolean;

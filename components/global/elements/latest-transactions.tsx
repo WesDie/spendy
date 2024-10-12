@@ -5,9 +5,9 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Transaction } from "@/components/global/overview/main-overview";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import { Transaction } from "@/types/database-types";
 
 export default function LatestTransactions({
   transactions,

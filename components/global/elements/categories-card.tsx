@@ -21,7 +21,6 @@ import {
   ChartTooltip,
 } from "@/components/ui/chart";
 
-import { Transaction } from "@/components/global/overview/main-overview";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { useMemo, useState } from "react";
@@ -29,17 +28,7 @@ import { useMemo, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { firstTransactionDate } from "@/components/global/utils/charts";
-
-export type Category = {
-  budget: number;
-  color: string;
-  created_at: string;
-  group: number;
-  icon: string;
-  id: number;
-  title: string;
-  type: "expense" | "income";
-};
+import { Category, Transaction } from "@/types/database-types";
 
 export function CategoriesCard({
   transactions,

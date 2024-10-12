@@ -22,7 +22,7 @@ import {
 import { BalanceChart } from "./charts/balance-chart";
 import { ExpenseChart } from "./charts/expenses-chart";
 import { ChartControls } from "./charts/chart-controls";
-import { Transaction } from "@/components/global/overview/main-overview";
+import { Transaction } from "@/types/database-types";
 
 const chartConfigs = {
   incomeExpenses: {

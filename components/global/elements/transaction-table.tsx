@@ -39,8 +39,7 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-import { Transaction } from "@/components/global/overview/main-overview";
-import { Category } from "@/components/global/elements/categories-card";
+import { Transaction, Category } from "@/types/database-types";
 import { useDialogs } from "@/components/providers/dialogs-provider";
 import {
   DropdownMenu,

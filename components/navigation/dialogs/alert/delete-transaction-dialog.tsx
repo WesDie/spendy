@@ -1,5 +1,5 @@
 "use client";
-import { Transaction } from "@/components/global/overview/main-overview";
+import { Transaction } from "@/types/database-types";
 
 import {
   AlertDialog,
