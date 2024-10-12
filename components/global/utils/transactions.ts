@@ -1,4 +1,4 @@
-import { Transaction } from "../overview/main-overview";
+import { Transaction } from "@/types/database-types";
 
 export function getAllTransactionData(
   transactions: Transaction[],
