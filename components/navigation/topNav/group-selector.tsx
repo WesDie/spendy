@@ -63,7 +63,8 @@ export function GroupSelector() {
       if (targetGroup) {
         setCurrentGroup(targetGroup);
       } else {
-        setCurrentGroup(groups[0]);
+        const personalGroup = groups.find((group) => group.type === "Personal");
+        setCurrentGroup(personalGroup || null);
       }
     }
   }, [groups, pathname, setCurrentGroup, currentGroup]);
