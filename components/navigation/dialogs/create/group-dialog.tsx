@@ -17,6 +17,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { toast } from "sonner";
 
 type GroupDialogProps = {
   open: boolean;
@@ -66,6 +67,7 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
       .then((data) => {
         setIsSubmitting(false);
         if (data.message === "Success") {
+          toast.success("Created group");
           setIsCreated(true);
           setShareLink(
             `https://spendy-mu.vercel.app/groups/${data.groupData.id}`
@@ -75,6 +77,7 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
           data.groupData.name = data.groupData.name.split(":")[0];
           setCurrentGroup(data.groupData);
         } else {
+          toast.error(data.error.message);
           setError(data.error);
         }
       })

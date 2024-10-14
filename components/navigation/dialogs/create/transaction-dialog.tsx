@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { Category } from "@/types/database-types";
+import { toast } from "sonner";
 
 type TransactionDialogProps = {
   open: boolean;
@@ -102,8 +103,10 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
         setIsSubmitting(false);
         if (data.message === "Success") {
           queryClient.invalidateQueries({ queryKey: ["transactions"] });
+          toast.success("Transaction created");
           onClose();
         } else {
+          toast.error(data.error.message);
           setError(data.error);
         }
       })

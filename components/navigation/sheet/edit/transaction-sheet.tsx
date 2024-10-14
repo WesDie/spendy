@@ -36,7 +36,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-
+import { toast } from "sonner";
 type TransactionSheetProps = {
   open: boolean;
   onClose: () => void;
@@ -109,8 +109,10 @@ export default function TransactionSheet({
         setIsSubmitting(false);
         if (data.message === "Transaction updated successfully") {
           queryClient.invalidateQueries({ queryKey: ["transactions"] });
+          toast.success("Transaction updated");
           onClose();
         } else {
+          toast.error(data.error.message);
           setError(data.error);
         }
       })

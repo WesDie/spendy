@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function DeleteTransactionDialog({
   transaction,
@@ -28,10 +29,19 @@ export function DeleteTransactionDialog({
     fetch("/api/transactions/delete", {
       method: "DELETE",
       body: JSON.stringify({ transaction: transaction }),
-    }).then(() => {
-      onClose();
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          queryClient.invalidateQueries({ queryKey: ["transactions"] });
+          toast.success("Transaction deleted");
+          onClose();
+        } else {
+          toast.error("Failed to delete transaction");
+        }
+      })
+      .catch((error) => {
+        toast.error("Failed to delete transaction");
+      });
   };
 
   return (
