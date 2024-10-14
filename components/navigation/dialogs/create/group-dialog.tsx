@@ -14,8 +14,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { DrawerClose } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -131,16 +131,16 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
           )}
           <DialogFooter>
             {isCreated ? (
-              <DrawerClose asChild>
+              <DialogClose asChild>
                 <Button variant="outline">Close</Button>
-              </DrawerClose>
+              </DialogClose>
             ) : (
               <>
-                <DrawerClose asChild>
+                <DialogClose asChild>
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>
-                </DrawerClose>
+                </DialogClose>
                 <Button type="submit" disabled={isCreatePending}>
                   {isCreatePending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

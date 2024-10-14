@@ -20,9 +20,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { CreateTransactionForm } from "@/components/global/forms/create-transaction-form";
-import { DrawerClose } from "@/components/ui/drawer";
 import { Loader2 } from "lucide-react";
 
 type TransactionDialogProps = {
@@ -111,9 +111,9 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
           categories={categories}
         >
           <DialogFooter>
-            <DrawerClose asChild>
+            <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
-            </DrawerClose>
+            </DialogClose>
             <Button type="submit" disabled={isCreatePending}>
               Create
               {isCreatePending && (
