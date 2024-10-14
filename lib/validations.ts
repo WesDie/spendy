@@ -26,3 +26,19 @@ export const createTransactionSchema = z.object({
 });
 
 export type CreateTransactionSchema = z.infer<typeof createTransactionSchema>;
+
+export const updateTransactionSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Transaction title is required")
+    .max(100, "Transaction title must be less than 100 characters"),
+  amount: z
+    .number()
+    .min(0.01, "Amount must be greater than 0")
+    .max(1000000, "Amount must be less than 1,000,000"),
+  type: z.enum(["income", "expense"]),
+  date: z.date(),
+  category: z.string().nullable().optional(),
+});
+
+export type UpdateTransactionSchema = z.infer<typeof updateTransactionSchema>;
