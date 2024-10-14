@@ -8,6 +8,7 @@ import {
   getArrowByType,
   getDateByType,
   setDateByType,
+  isTimeGreaterThanNow,
 } from "@/components/ui/utils/time-picker-utils";
 
 export interface TimePickerInputProps
@@ -18,6 +19,7 @@ export interface TimePickerInputProps
   period?: Period;
   onRightFocus?: () => void;
   onLeftFocus?: () => void;
+  preventFutureTime?: boolean;
 }
 
 const TimePickerInput = React.forwardRef<
@@ -39,6 +41,7 @@ const TimePickerInput = React.forwardRef<
       period,
       onLeftFocus,
       onRightFocus,
+      preventFutureTime = false,
       ...props
     },
     ref
@@ -87,7 +90,10 @@ const TimePickerInput = React.forwardRef<
         const newValue = getArrowByType(calculatedValue, step, picker);
         if (flag) setFlag(false);
         const tempDate = new Date(date);
-        setDate(setDateByType(tempDate, newValue, picker, period));
+        const updatedDate = setDateByType(tempDate, newValue, picker, period);
+        if (!preventFutureTime || !isTimeGreaterThanNow(updatedDate)) {
+          setDate(updatedDate);
+        }
       }
       if (e.key >= "0" && e.key <= "9") {
         if (picker === "12hours") setPrevIntKey(e.key);
@@ -96,7 +102,10 @@ const TimePickerInput = React.forwardRef<
         if (flag) onRightFocus?.();
         setFlag((prev) => !prev);
         const tempDate = new Date(date);
-        setDate(setDateByType(tempDate, newValue, picker, period));
+        const updatedDate = setDateByType(tempDate, newValue, picker, period);
+        if (!preventFutureTime || !isTimeGreaterThanNow(updatedDate)) {
+          setDate(updatedDate);
+        }
       }
     };
 

@@ -201,3 +201,8 @@ export function display12HourValue(hours: number) {
   if (hours % 12 > 9) return `${hours}`;
   return `0${hours % 12}`;
 }
+
+export function isTimeGreaterThanNow(date: Date): boolean {
+  const now = new Date();
+  return date.getTime() > now.getTime();
+}
