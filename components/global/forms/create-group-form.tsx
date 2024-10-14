@@ -7,8 +7,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Copy, Check } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { type CreateGroupSchema } from "@/lib/validations";
 

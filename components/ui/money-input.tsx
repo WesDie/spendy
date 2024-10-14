@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
+import { useFormField } from "@/components/ui/form";
 
 interface MoneyInputProps {
   value: number;
@@ -18,10 +19,11 @@ export const MoneyInput: React.FC<MoneyInputProps> = ({
   currency = "USD",
   placeholder = "0.00",
   className = "",
-  error,
+
   id,
 }) => {
   const [displayValue, setDisplayValue] = useState(value.toFixed(2));
+  const { error } = useFormField();
 
   useEffect(() => {
     setDisplayValue(value.toFixed(2));
@@ -70,8 +72,9 @@ export const MoneyInput: React.FC<MoneyInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder={placeholder}
-        className={cn("pl-8 pr-16", className)}
-        error={error}
+        className={cn("pl-8 pr-16", className, {
+          "border-red-500": error,
+        })}
         id={id}
       />
       <span className="absolute left-3 text-muted-foreground">
