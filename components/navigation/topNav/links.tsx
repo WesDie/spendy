@@ -9,7 +9,7 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
     { href: "/transactions", label: "Transactions" },
     { href: "/categories", label: "Categories" },
     { href: "/recurring", label: "Recurring", disabled: true },
-    { href: "/settings", label: "Settings", disabled: true },
+    { href: "/group-settings", label: "Settings", disabled: true },
   ];
 
   return (
