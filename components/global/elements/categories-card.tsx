@@ -29,6 +29,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { firstTransactionDate } from "@/components/global/utils/charts";
 import { Category, Transaction } from "@/types/database-types";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function CategoriesCard({
   transactions,
@@ -37,6 +38,7 @@ export function CategoriesCard({
 }) {
   const [showPercentage, setShowPercentage] = useState(true);
   const { getDateRange, currentGroup, activeDateOption } = useGlobalContext();
+  const isMobile = useMediaQuery("(max-width: 640px)");
 
   const { data: categories, error: categoriesError } = useQuery({
     queryKey: ["categories", currentGroup?.id],
@@ -114,7 +116,7 @@ export function CategoriesCard({
 
   return (
     <Card className="flex flex-col justify-between">
-      <CardHeader className="flex-row justify-between">
+      <CardHeader className="flex-col gap-2 sm:gap-0 sm:flex-row justify-between">
         <div className="space-y-1">
           <CardTitle>Categories</CardTitle>
           <CardDescription>
@@ -140,7 +142,11 @@ export function CategoriesCard({
             accessibilityLayer
             data={chartData}
             layout="vertical"
-            margin={{ top: 20, right: 75, left: 70, bottom: 5 }}
+            margin={
+              isMobile
+                ? { top: 20, right: 0, left: 0, bottom: 5 }
+                : { top: 20, right: 75, left: 70, bottom: 5 }
+            }
           >
             <CartesianGrid horizontal={false} />
             <YAxis

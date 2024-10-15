@@ -5,7 +5,7 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
     <nav
       className={`${
         type === "mobile"
-          ? "flex gap-2 text-sm"
+          ? "flex gap-4 text-sm"
           : "hidden md:flex md:flex-row md:items-center md:gap-3 md:text-sm lg:gap-4"
       }`}
     >

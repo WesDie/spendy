@@ -26,7 +26,7 @@ export const BalanceChart: React.FC<BalanceChartProps> = ({
         accessibilityLayer
         data={data}
         margin={{
-          left: 12,
+          left: 0,
           right: 12,
           top: 12,
           bottom: 12,

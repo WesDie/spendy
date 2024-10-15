@@ -152,7 +152,7 @@ export default function FinanceChart({
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-col gap-2 md:gap-0 md:flex-row justify-between p-6">
+      <CardHeader className="flex flex-col gap-2 md:gap-0 md:flex-row justify-between pb-4 sm:p-6">
         <div className="flex flex-col space-y-1.5">
           <CardTitle>Financial Overview</CardTitle>
           <CardDescription>

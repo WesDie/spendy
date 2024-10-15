@@ -18,7 +18,7 @@ export function TopNavBar() {
           <Profile />
         </div>
       </div>
-      <div className="flex items-center justify-between py-2 px-4 border-b md:hidden">
+      <div className="flex items-center justify-between py-4 overflow-x-auto px-4 border-b md:hidden">
         <Links type="mobile" />
       </div>
     </>

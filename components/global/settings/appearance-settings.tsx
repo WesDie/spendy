@@ -104,7 +104,7 @@ export default function AppearanceSettings() {
                 }`}
               >
                 <div
-                  className={`w-[200px] h-[100px] p-2 rounded-md ${
+                  className={`w-[150px] h-[75px] p-2 rounded-md ${
                     theme === "light" ? light : dark
                   }`}
                 />

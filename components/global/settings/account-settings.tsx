@@ -71,7 +71,7 @@ export default function AccountSettings() {
           />
         )}
         <Separator />
-        <div className="flex justify-between gap-2 h-9">
+        <div className="flex justify-between gap-2 h-9 hidden sm:block">
           <Label
             htmlFor="email"
             className="text-muted-foreground my-auto font-normal"
@@ -144,7 +144,7 @@ export default function AccountSettings() {
         <div className="flex justify-between gap-2 h-9">
           <Label
             htmlFor="password"
-            className="text-muted-foreground my-auto font-normal"
+            className="text-muted-foreground my-auto font-normal hidden sm:block"
           >
             Your password is used to log in to your account.
           </Label>
@@ -181,7 +181,7 @@ export default function AccountSettings() {
         <div className="flex justify-between gap-2 h-9">
           <Label
             htmlFor="email"
-            className="text-muted-foreground my-auto font-normal"
+            className="text-muted-foreground my-auto font-normal hidden sm:block"
           >
             Your full name is used to identify you in the platform.
           </Label>

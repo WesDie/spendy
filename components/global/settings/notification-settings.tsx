@@ -66,7 +66,7 @@ export default function NotificationSettings() {
         <div className="flex justify-between gap-2 h-9">
           <Label
             htmlFor="theme"
-            className="text-muted-foreground my-auto font-normal"
+            className="text-muted-foreground my-auto font-normal hidden sm:block"
           >
             Update your notification settings.
           </Label>

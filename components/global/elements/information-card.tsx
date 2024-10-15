@@ -16,7 +16,7 @@ export default function InformationCard({
 }) {
   return (
     <Card x-chunk="dashboard-01-chunk-0">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <div className="flex items-center gap-2 text-muted-foreground w-4 h-4">
           {icon}

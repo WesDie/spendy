@@ -50,10 +50,10 @@ export default function MainOverview() {
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">
       <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
-        <h3 className="text-3xl font-semibold">Overview</h3>
+        <h3 className="text-xl sm:text-3xl font-semibold">Overview</h3>
         <DatePickerWithRange />
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-8 sm:gap-4">
         <div className="w-full grid grid-rows-4 md:grid-rows-none md:grid-cols-4 gap-4">
           <InformationCard
             title="Current Balance"
@@ -75,7 +75,7 @@ export default function MainOverview() {
           />
         </div>
         {transactions && <FinanceChart transactions={transactions} />}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-4">
           {transactions && <LatestTransactions transactions={transactions} />}
           {transactions && <CategoriesCard transactions={transactions} />}
         </div>

@@ -16,7 +16,7 @@ export default function Categories() {
     return (
       <main className="flex flex-col h-full w-full p-6 px-4 md:p-8">
         <div className="flex flex-col h-full w-full gap-6 md:gap-10">
-          <h3 className="text-3xl font-semibold">Categories</h3>
+          <h3 className="text-xl sm:text-3xl font-semibold">Categories</h3>
           <div className="flex flex-col gap-4 w-full">
             <Skeleton className="h-[300px] w-full" />
           </div>
@@ -29,7 +29,7 @@ export default function Categories() {
     <main className="flex flex-col h-full w-full p-6 px-4 md:p-8">
       <div className="flex flex-col h-full w-full gap-6 md:gap-10">
         <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
-          <h3 className="text-3xl font-semibold">Categories</h3>
+          <h3 className="text-xl sm:text-3xl font-semibold">Categories</h3>
           <DatePickerWithRange />
         </div>
         <div className="flex flex-col gap-4">

@@ -51,7 +51,7 @@ export default function ProfileSettings() {
           <div className="flex justify-between gap-2 h-9">
             <Label
               htmlFor="display-name"
-              className="text-muted-foreground my-auto font-normal"
+              className="text-muted-foreground my-auto font-normal hidden sm:block"
             >
               Your display name is how you appear to others on the platform.
             </Label>
@@ -77,9 +77,9 @@ export default function ProfileSettings() {
           <div className="flex justify-between gap-2 h-9">
             <Label
               htmlFor="bio"
-              className="text-muted-foreground my-auto font-normal"
+              className="text-muted-foreground my-auto font-normal hidden sm:block"
             >
-              An avatar is optional but strongly recommended.
+              Your bio is optional and can be used to give more information.
             </Label>
             <Button className="w-fit" disabled>
               Change bio

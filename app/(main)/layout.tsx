@@ -15,7 +15,7 @@ export default function RootLayout({
       <DialogProvider>
         <CommandMenuProvider>
           <ShortcutsProvider>
-            <main className="w-full h-full flex flex-col pt-20">
+            <main className="w-full h-full flex flex-col pt-[69px] overflow-hidden">
               <TopNavBar />
               {children}
             </main>

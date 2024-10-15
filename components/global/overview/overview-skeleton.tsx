@@ -4,7 +4,7 @@ export default function OverviewSkeleton() {
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">
       <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
-        <h3 className="text-3xl font-semibold">Dashboard</h3>
+        <h3 className="text-xl sm:text-3xl font-semibold">Dashboard</h3>
         <Skeleton className="w-48 h-12" />
       </div>
       <div className="flex flex-col gap-4">
