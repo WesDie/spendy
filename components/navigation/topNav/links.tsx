@@ -1,6 +1,17 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Links({ type }: { type: "mobile" | "desktop" }) {
+  const pathname = usePathname();
+
+  const links = [
+    { href: "/", label: "Overview" },
+    { href: "/transactions", label: "Transactions" },
+    { href: "/categories", label: "Categories" },
+    { href: "/recurring", label: "Recurring", disabled: true },
+    { href: "/settings", label: "Settings", disabled: true },
+  ];
+
   return (
     <nav
       className={`${
@@ -9,36 +20,23 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
           : "hidden md:flex md:flex-row md:items-center md:gap-3 md:text-sm lg:gap-4"
       }`}
     >
-      <Link
-        href="/"
-        className="text-muted-foreground transition-colors hover:text-foreground"
-      >
-        Overview
-      </Link>
-      <Link
-        href="/transactions"
-        className="text-muted-foreground transition-colors hover:text-foreground"
-      >
-        Transactions
-      </Link>
-      <Link
-        href="/categories"
-        className="text-muted-foreground transition-colors hover:text-foreground"
-      >
-        Categories
-      </Link>
-      <Link
-        href="/"
-        className="text-muted-foreground pointer-events-none opacity-50 transition-colors hover:text-foreground"
-      >
-        Recurring
-      </Link>
-      <Link
-        href="/"
-        className="text-muted-foreground pointer-events-none opacity-50 transition-colors hover:text-foreground"
-      >
-        Settings
-      </Link>
+      {links.map((link) => (
+        <Link
+          key={link.label}
+          href={link.href}
+          className={`
+            ${link.disabled ? "pointer-events-none opacity-50" : ""}
+            ${
+              pathname === link.href
+                ? "text-foreground"
+                : "text-muted-foreground"
+            }
+            transition-colors hover:text-foreground
+          `}
+        >
+          {link.label}
+        </Link>
+      ))}
     </nav>
   );
 }
