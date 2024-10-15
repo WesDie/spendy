@@ -18,6 +18,12 @@ export async function PATCH(req: NextRequest) {
     transactionData.category = null;
   }
 
+  const dateWithTimezone = new Date(transactionData.date);
+  dateWithTimezone.setMinutes(
+    dateWithTimezone.getMinutes() - dateWithTimezone.getTimezoneOffset()
+  );
+  transactionData.date = dateWithTimezone.toISOString();
+
   // Validate transaction data
   const validationError = validateUpdateTransactionData(transactionData);
   if (validationError) {

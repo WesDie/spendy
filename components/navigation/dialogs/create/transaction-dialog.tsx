@@ -49,7 +49,7 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
       title: "",
       amount: 0,
       type: "expense",
-      date: new Date(),
+      date: new Date(new Date().setSeconds(0)),
       category: null,
       group: currentGroup?.id,
     },
@@ -58,6 +58,7 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
   useEffect(() => {
     if (open) {
       form.reset();
+      form.setValue("date", new Date(new Date().setSeconds(0)));
     }
   }, [open, form]);
 

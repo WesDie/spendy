@@ -15,6 +15,12 @@ export async function POST(req: NextRequest) {
   const supabase = createClient();
   const { transactionData } = await req.json();
 
+  const dateWithTimezone = new Date(transactionData.date);
+  dateWithTimezone.setMinutes(
+    dateWithTimezone.getMinutes() - dateWithTimezone.getTimezoneOffset()
+  );
+  transactionData.date = dateWithTimezone.toISOString();
+
   if (transactionData.type === "income") {
     transactionData.category = null;
   }

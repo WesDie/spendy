@@ -106,9 +106,7 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
       );
     },
     cell: ({ row }) => {
-      const date = new Date(row.getValue("date"));
-      const formatted = date.toLocaleString("en-US", { timeZone: "UTC" });
-      return <div>{formatted}</div>;
+      return <div>{new Date(row.getValue("date")).toLocaleString()}</div>;
     },
   },
   {

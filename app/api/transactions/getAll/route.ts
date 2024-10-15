@@ -37,10 +37,12 @@ export async function GET(req: NextRequest) {
   }
 
   // Add categories to transactions
-  const transactionsWithCategory = transactions.map((transaction) => {
+  const formattedTransactions = transactions.map((transaction) => {
     const category = categories.find((c) => c.id === transaction.category);
-    return { ...transaction, category };
+    const date = new Date(transaction.date);
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+    return { ...transaction, category, date };
   });
 
-  return NextResponse.json(transactionsWithCategory, { status: 200 });
+  return NextResponse.json(formattedTransactions, { status: 200 });
 }
