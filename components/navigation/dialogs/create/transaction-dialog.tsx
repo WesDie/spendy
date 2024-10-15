@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 import {
   createTransactionSchema,
@@ -22,6 +23,15 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerContent,
+  DrawerClose,
+  DrawerFooter,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { CreateTransactionForm } from "@/components/global/forms/create-transaction-form";
 import { Loader2 } from "lucide-react";
 
@@ -34,7 +44,7 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
   const { currentGroup } = useGlobalContext();
   const queryClient = useQueryClient();
   const [isCreatePending, startCreateTransaction] = React.useTransition();
-
+  const isDesktop = useMediaQuery("(min-width: 640px)");
   const { data: categories } = useQuery({
     queryKey: ["categories", currentGroup?.id],
     queryFn: () =>
@@ -97,33 +107,65 @@ export function TransactionDialog({ open, onClose }: TransactionDialogProps) {
     });
   }
 
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create Transaction</DialogTitle>
+            <DialogDescription>
+              Create a new transaction to manage your expenses.
+            </DialogDescription>
+          </DialogHeader>
+          <CreateTransactionForm
+            form={form}
+            onSubmit={onSubmit}
+            categories={categories}
+          >
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button type="submit" disabled={isCreatePending}>
+                Create
+                {isCreatePending && (
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                )}
+              </Button>
+            </DialogFooter>
+          </CreateTransactionForm>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Create Transaction</DialogTitle>
-          <DialogDescription>
+    <Drawer open={open} onOpenChange={onClose}>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Create Transaction</DrawerTitle>
+          <DrawerDescription>
             Create a new transaction to manage your expenses.
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </DrawerHeader>
         <CreateTransactionForm
           form={form}
           onSubmit={onSubmit}
           categories={categories}
         >
-          <DialogFooter>
-            <DialogClose asChild>
+          <DrawerFooter className="pt-2">
+            <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            </DrawerClose>
             <Button type="submit" disabled={isCreatePending}>
-              Create
               {isCreatePending && (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
+              Create
             </Button>
-          </DialogFooter>
+          </DrawerFooter>
         </CreateTransactionForm>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 }

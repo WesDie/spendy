@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 import {
   Dialog,
@@ -16,6 +17,15 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerFooter,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerHeader,
+} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -37,6 +47,7 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
   const [copied, setCopied] = useState(false);
   const router = useRouter();
   const { setCurrentGroup } = useGlobalContext();
+  const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const form = useForm<CreateGroupSchema>({
     resolver: zodResolver(createGroupSchema),
@@ -96,23 +107,88 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
     }
   }, [open, form]);
 
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {isCreated ? `"${form.watch("name")}" created` : "Create Group"}
+            </DialogTitle>
+            <DialogDescription>
+              {isCreated
+                ? "You can now invite your contacts to the group via this link:"
+                : "Create a new group to manage your expenses."}
+            </DialogDescription>
+          </DialogHeader>
+          <CreateGroupForm
+            form={form}
+            onSubmit={onSubmit}
+            isCreated={isCreated}
+          >
+            {isCreated && (
+              <div className="w-full">
+                <div className="flex items-center space-x-2 mt-4">
+                  <Input value={shareLink} readOnly />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={handleCopyLink}
+                    disabled={copied}
+                  >
+                    {copied ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              {isCreated ? (
+                <DialogClose asChild>
+                  <Button variant="outline">Close</Button>
+                </DialogClose>
+              ) : (
+                <>
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button type="submit" disabled={isCreatePending}>
+                    {isCreatePending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Create
+                  </Button>
+                </>
+              )}
+            </DialogFooter>
+          </CreateGroupForm>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>
+    <Drawer open={open} onOpenChange={onClose}>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>
             {isCreated ? `"${form.watch("name")}" created` : "Create Group"}
-          </DialogTitle>
-          <DialogDescription>
+          </DrawerTitle>
+          <DrawerDescription>
             {isCreated
               ? "You can now invite your contacts to the group via this link:"
               : "Create a new group to manage your expenses."}
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </DrawerHeader>
         <CreateGroupForm form={form} onSubmit={onSubmit} isCreated={isCreated}>
           {isCreated && (
             <div className="w-full">
-              <div className="flex items-center space-x-2 mt-4">
+              <div className="flex items-center space-x-2 mt-4 px-4">
                 <Input value={shareLink} readOnly />
                 <Button
                   size="icon"
@@ -129,18 +205,18 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
               </div>
             </div>
           )}
-          <DialogFooter>
+          <DrawerFooter className="pt-2">
             {isCreated ? (
-              <DialogClose asChild>
+              <DrawerClose asChild>
                 <Button variant="outline">Close</Button>
-              </DialogClose>
+              </DrawerClose>
             ) : (
               <>
-                <DialogClose asChild>
+                <DrawerClose asChild>
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>
-                </DialogClose>
+                </DrawerClose>
                 <Button type="submit" disabled={isCreatePending}>
                   {isCreatePending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -149,9 +225,9 @@ export function GroupDialog({ open, onClose }: GroupDialogProps) {
                 </Button>
               </>
             )}
-          </DialogFooter>
+          </DrawerFooter>
         </CreateGroupForm>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 }
