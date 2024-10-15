@@ -71,7 +71,7 @@ export default function AccountSettings() {
           />
         )}
         <Separator />
-        <div className="flex justify-between gap-2 h-9 hidden sm:block">
+        <div className="justify-between gap-2 h-9 hidden sm:flex">
           <Label
             htmlFor="email"
             className="text-muted-foreground my-auto font-normal"

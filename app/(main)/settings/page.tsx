@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, Sun, User } from "lucide-react";
+import { Bell, IdCard, Sun, User } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 import AppearanceSettings from "@/components/global/settings/appearance-settings";
@@ -15,7 +15,7 @@ export default function SettingsPage() {
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
-    { id: "account", label: "Account", icon: User },
+    { id: "account", label: "Account", icon: IdCard },
     { id: "appearance", label: "Appearance", icon: Sun },
     { id: "notifications", label: "Notifications", icon: Bell },
   ];

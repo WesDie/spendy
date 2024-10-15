@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllTransactionData } from "../utils/transactions";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { useEffect, useState } from "react";
-import { Percent } from "lucide-react";
+import { HandCoins, Percent, Wallet } from "lucide-react";
 import OverviewSkeleton from "./overview-skeleton";
 import { CategoriesCard } from "../elements/categories-card";
 
@@ -62,10 +62,12 @@ export default function MainOverview() {
           <InformationCard
             title="Total Expenses"
             value={transactionData.totalSpend}
+            icon={<HandCoins />}
           />
           <InformationCard
             title="Total income"
             value={transactionData.totalIncome}
+            icon={<Wallet />}
           />
           <InformationCard
             title="Total Profit Margin"
