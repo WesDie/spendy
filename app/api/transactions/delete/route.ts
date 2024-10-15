@@ -1,56 +1,91 @@
 import { createClient } from "@/utils/supabase/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 
-export async function DELETE(req: Request) {
+type TransactionData = {
+  id: number;
+  group: number;
+};
+
+export async function DELETE(req: NextRequest) {
   const supabase = createClient();
 
-  const { transaction } = await req.json();
+  const { transactionData } = await req.json();
 
-  if (!transaction) {
-    return NextResponse.json(
-      { error: "Transaction ID is required" },
-      { status: 400 }
+  console.log(transactionData);
+
+  // Validate transaction data
+  const validationError = validateTransactionData(transactionData);
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400 });
+  }
+
+  try {
+    // Get user data
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      throw new Error("User not authenticated");
+    }
+
+    // Delete transactions using RPC function
+    const deletePromises = transactionData.map((transaction: TransactionData) =>
+      supabase.rpc("delete_transaction", {
+        p_transaction_id: transaction.id,
+        p_group_id: transaction.group,
+        p_user_id: userData.user.id,
+      })
     );
-  }
 
-  const { data: user, error: userError } = await supabase.auth.getUser();
+    const results = await Promise.all(deletePromises);
 
-  if (userError) {
-    return NextResponse.json({ error: userError.message }, { status: 500 });
-  }
+    // Check if any deletion failed
+    const errors = results.filter((result) => result.error);
+    if (errors.length > 0) {
+      throw new Error(`Failed to delete ${errors.length} transactions`);
+    }
 
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
+    revalidateTag("transactions");
 
-  const { data: userGroup, error: userGroupError } = await supabase
-    .from("spendy_group_members")
-    .select("group_id")
-    .eq("group_id", transaction.group)
-    .eq("user_id", user.user.id);
-
-  if (userGroupError) {
     return NextResponse.json(
-      { error: userGroupError.message },
+      {
+        message: `${transactionData.length} transaction(s) deleted successfully`,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting transaction(s):", error);
+    return NextResponse.json(
+      { error: { message: "Internal server error" } },
       { status: 500 }
     );
   }
+}
 
-  if (!userGroup || userGroup.length === 0) {
-    return NextResponse.json(
-      { error: "User is not part of a group" },
-      { status: 404 }
-    );
+function validateTransactionData(transactionData: TransactionData[]): {
+  message: string;
+  fields: string[];
+} | null {
+  if (!Array.isArray(transactionData) || transactionData.length === 0) {
+    return {
+      message: "Transaction data must be a non-empty array",
+      fields: ["transactionData"],
+    };
   }
 
-  const { error } = await supabase
-    .from("spendy_transactions")
-    .delete()
-    .eq("id", transaction.id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  for (const transaction of transactionData) {
+    if (!transaction.id) {
+      return {
+        message: "Transaction ID is required for all transactions",
+        fields: ["id"],
+      };
+    }
+    if (!transaction.group) {
+      return {
+        message: "Group ID is required for all transactions",
+        fields: ["group"],
+      };
+    }
   }
 
-  return NextResponse.json({ message: "Transaction deleted successfully" });
+  return null;
 }

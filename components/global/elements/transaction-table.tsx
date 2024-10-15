@@ -171,7 +171,7 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
           <DeleteTransactionDialog
             open={isDeleteTransactionDialogOpen}
             onClose={() => setIsDeleteTransactionDialogOpen(false)}
-            transaction={transaction}
+            transactions={[transaction]}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
