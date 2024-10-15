@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, IdCard, Sun, User } from "lucide-react";
+import { Bell, IdCard, Settings, Sun, User } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 import AppearanceSettings from "@/components/global/settings/appearance-settings";
 import ProfileSettings from "@/components/global/settings/profile-settings";
 import NotificationSettings from "@/components/global/settings/notification-settings";
 import AccountSettings from "@/components/global/settings/account-settings";
+import PreferencesSettings from "@/components/global/settings/preferences-settings";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -16,6 +17,7 @@ export default function SettingsPage() {
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "account", label: "Account", icon: IdCard },
+    { id: "preferences", label: "Preferences", icon: Settings },
     { id: "appearance", label: "Appearance", icon: Sun },
     { id: "notifications", label: "Notifications", icon: Bell },
   ];
@@ -67,6 +69,7 @@ export default function SettingsPage() {
         <div className="flex-1 flex-col flex px-0 sm:px-8 gap-4">
           {activeTab === "profile" && <ProfileSettings />}
           {activeTab === "account" && <AccountSettings />}
+          {activeTab === "preferences" && <PreferencesSettings />}
           {activeTab === "appearance" && <AppearanceSettings />}
           {activeTab === "notifications" && <NotificationSettings />}
         </div>
