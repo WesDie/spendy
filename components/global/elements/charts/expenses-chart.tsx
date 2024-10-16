@@ -59,8 +59,8 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({
         cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
         content={<ChartTooltipContent indicator="dot" />}
       />
-      <Bar dataKey="expenses" fill="var(--color-expenses)" stackId="a" />
-      <Bar dataKey="income" fill="var(--color-income)" stackId="a" />
+      <Bar dataKey="expenses" fill="var(--color-expenses)" />
+      <Bar dataKey="income" fill="var(--color-income)" />
     </BarChart>
   </ResponsiveContainer>
 );
