@@ -1,57 +1,58 @@
+"use client";
+import * as React from "react";
+
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import SettingsCard from "./elements/settings-card";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
-import { useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { changePasswordSchema } from "@/lib/validations";
+import { toast } from "sonner";
+import { ChangePasswordSchema } from "@/lib/validations";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import PasswordChangeForm from "./forms/password-change-form";
 
 export default function AccountSettings() {
   const { user } = useGlobalContext();
+  const [isPasswordChangePending, startPasswordChangeTransition] =
+    React.useTransition();
 
-  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
-
-  const [passwordFormData, setPasswordFormData] = useState({
-    currentPassword: "",
-    newPassword: "",
+  const changePasswordForm = useForm<ChangePasswordSchema>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+    },
   });
-  const [passwordError, setPasswordError] = useState({
-    message: "",
-    fields: [] as string[],
-  });
 
-  const handleChangePassword = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleChangePassword = async (data: ChangePasswordSchema) => {
+    startPasswordChangeTransition(async () => {
+      try {
+        const response = await fetch("/api/auth/changePassword", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
 
-    fetch("/api/auth/changePassword", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwordFormData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          setPasswordError(data.error);
-        } else {
-          setPasswordError({
-            message: "",
-            fields: [],
-          });
-          setPasswordSuccess("Password changed successfully");
-          setPasswordFormData({
-            currentPassword: "",
-            newPassword: "",
-          });
+        const result = await response.json();
 
-          setTimeout(() => {
-            setPasswordSuccess(null);
-          }, 5000);
+        if (!response.ok) {
+          throw new Error(result.error?.message || "Failed to change password");
         }
-      });
+
+        toast.success("Password changed successfully");
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? `Server: ${error.message}`
+            : "Server: An error occurred"
+        );
+      }
+    });
   };
 
   return (
@@ -82,82 +83,17 @@ export default function AccountSettings() {
         </div>
       </SettingsCard>
       <SettingsCard
-        title="Password"
+        title="Change password"
         description="Change your password."
-        isForm
-        handleSubmit={handleChangePassword}
-      >
-        {passwordError.message && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Password change failed</AlertTitle>
-            <AlertDescription>{passwordError.message}</AlertDescription>
-          </Alert>
-        )}
-        {passwordSuccess && (
-          <Alert variant="success">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Password changed successfully</AlertTitle>
-            <AlertDescription>{passwordSuccess}</AlertDescription>
-          </Alert>
-        )}
-        <Input
-          type="text"
-          id="username"
-          disabled
-          value={user?.email}
-          autoComplete="username"
-          className="hidden"
-        />
-
-        <Input
-          type="password"
-          id="current-password"
-          placeholder="Enter your current password"
-          className="w-[400px]"
-          autoComplete="current-password"
-          value={passwordFormData.currentPassword}
-          onChange={(e) =>
-            setPasswordFormData({
-              ...passwordFormData,
-              currentPassword: e.target.value,
-            })
-          }
-          error={passwordError.fields.includes("currentPassword")}
-        />
-        <Input
-          type="password"
-          id="password"
-          placeholder="Enter your new password"
-          className="w-[400px]"
-          autoComplete="new-password"
-          value={passwordFormData.newPassword}
-          onChange={(e) =>
-            setPasswordFormData({
-              ...passwordFormData,
-              newPassword: e.target.value,
-            })
-          }
-          error={passwordError.fields.includes("newPassword")}
-        />
-        <Separator />
-        <div className="flex justify-between gap-2 h-9">
-          <Label
-            htmlFor="password"
-            className="text-muted-foreground my-auto font-normal hidden sm:block"
-          >
-            Your password is used to log in to your account.
-          </Label>
-          <Button
-            className="w-fit"
-            disabled={
-              !passwordFormData.currentPassword || !passwordFormData.newPassword
-            }
-          >
-            Change password
-          </Button>
-        </div>
-      </SettingsCard>
+        label="Changes to your password will be reflected across your account."
+        formProps={{
+          component: <PasswordChangeForm form={changePasswordForm} />,
+          buttonText: "Change Password",
+          onSubmit: handleChangePassword,
+          isPending: isPasswordChangePending,
+          form: changePasswordForm,
+        }}
+      />
       <SettingsCard title="Full name" description="Change your full name.">
         <div className="flex gap-2">
           <Input

@@ -51,3 +51,12 @@ export const updateDisplayNameSchema = z.object({
 });
 
 export type UpdateDisplayNameSchema = z.infer<typeof updateDisplayNameSchema>;
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z
+    .string()
+    .min(6, "New password must be at least 6 characters long"),
+});
+
+export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
