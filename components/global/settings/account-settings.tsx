@@ -1,15 +1,14 @@
 "use client";
 import * as React from "react";
 
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
 import SettingsCard from "./elements/settings-card";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import {
   changePasswordSchema,
   updateUserNameSchema,
   UpdateUserNameSchema,
+  updateEmailSchema,
+  UpdateEmailSchema,
 } from "@/lib/validations";
 import { toast } from "sonner";
 import { ChangePasswordSchema } from "@/lib/validations";
@@ -18,6 +17,7 @@ import { useForm } from "react-hook-form";
 import PasswordChangeForm from "./forms/password-change-form";
 import UserNameForm from "./forms/user-name-form";
 import { useQueryClient } from "@tanstack/react-query";
+import EmailForm from "./forms/email-form";
 
 export default function AccountSettings() {
   const queryClient = useQueryClient();
@@ -27,6 +27,9 @@ export default function AccountSettings() {
     React.useTransition();
 
   const [isUserNameChangePending, startUserNameChangeTransition] =
+    React.useTransition();
+
+  const [isEmailChangePending, startEmailChangeTransition] =
     React.useTransition();
 
   const changePasswordForm = useForm<ChangePasswordSchema>({
@@ -42,6 +45,13 @@ export default function AccountSettings() {
     defaultValues: {
       firstName: user?.first_name || "",
       lastName: user?.last_name || "",
+    },
+  });
+
+  const emailForm = useForm<UpdateEmailSchema>({
+    resolver: zodResolver(updateEmailSchema),
+    defaultValues: {
+      email: user?.email || "",
     },
   });
 
@@ -118,33 +128,25 @@ export default function AccountSettings() {
     });
   };
 
+  const handleChangeEmail = async (data: UpdateEmailSchema) => {
+    startEmailChangeTransition(async () => {
+      toast.error("You cant change your email address yet.");
+    });
+  };
+
   return (
     <>
       <SettingsCard
         title="Email"
-        description="Your email used by this account."
-      >
-        {user && (
-          <Input
-            type="text"
-            id="email"
-            placeholder="Enter your email"
-            className="w-[400px]"
-            disabled
-            value={user?.email}
-          />
-        )}
-        <Separator />
-        <div className="justify-between gap-2 h-9 hidden sm:flex">
-          <Label
-            htmlFor="email"
-            className="text-muted-foreground my-auto font-normal"
-          >
-            Your email is used to log in to your account. An email can only be
-            changed via support.
-          </Label>
-        </div>
-      </SettingsCard>
+        description="This is the email used by this account."
+        formProps={{
+          component: <EmailForm form={emailForm} />,
+          buttonText: "Change Email",
+          onSubmit: handleChangeEmail,
+          isPending: isEmailChangePending,
+          form: emailForm,
+        }}
+      />
       <SettingsCard
         title="Change password"
         description="Change your password."

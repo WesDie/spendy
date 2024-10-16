@@ -67,3 +67,9 @@ export const updateUserNameSchema = z.object({
 });
 
 export type UpdateUserNameSchema = z.infer<typeof updateUserNameSchema>;
+
+export const updateEmailSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export type UpdateEmailSchema = z.infer<typeof updateEmailSchema>;
