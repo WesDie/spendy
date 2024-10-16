@@ -73,3 +73,14 @@ export const updateEmailSchema = z.object({
 });
 
 export type UpdateEmailSchema = z.infer<typeof updateEmailSchema>;
+
+export const updateAccountNotificationsSchema = z.object({
+  reminderEmails: z.boolean(),
+  activityEmails: z.boolean(),
+  newsletterEmails: z.boolean(),
+  securityEmails: z.boolean(),
+});
+
+export type UpdateAccountNotificationsSchema = z.infer<
+  typeof updateAccountNotificationsSchema
+>;
