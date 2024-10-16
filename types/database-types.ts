@@ -31,3 +31,12 @@ export type Transaction = {
     icon: string;
   };
 };
+
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  first_name: string;
+  last_name: string;
+  avatar_url: string;
+};

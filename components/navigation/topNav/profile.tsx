@@ -25,6 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import UserAvatar from "@/components/global/elements/avatar";
 
 export function Profile() {
   const { openDialog: openDialogType } = useCommandMenu();
@@ -51,10 +52,7 @@ export function Profile() {
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
-          <Avatar className="w-8 h-8">
-            <AvatarImage src="https://github.com/wesdie.png" />
-            <AvatarFallback>SP</AvatarFallback>
-          </Avatar>
+          <UserAvatar size="small" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">

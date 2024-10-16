@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import UserAvatar from "../elements/avatar";
 
 export default function ProfileSettings() {
   return (
@@ -20,10 +20,7 @@ export default function ProfileSettings() {
           <CardDescription>Change your avatar.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <Avatar className="w-24 h-24">
-            <AvatarImage src="https://github.com/wesdie.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <UserAvatar isChangeable size="large" />
           <Separator />
           <div className="flex justify-between gap-2 h-9">
             <Label

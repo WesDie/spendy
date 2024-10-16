@@ -11,18 +11,14 @@ import {
   endOfYear,
   endOfMonth,
 } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { User } from "@/types/database-types";
 
 type Group = {
   id: number;
   name: string;
   icon: string;
   type: "Personal" | "External";
-};
-
-type User = {
-  id: string;
-  email: string;
-  name: string;
 };
 
 type DateOption = "month" | "halfyear" | "year" | "total";
@@ -41,7 +37,7 @@ type GlobalContextType = {
   isNextDateDisabled: () => boolean;
   isPrevDateDisabled: () => boolean;
   user: User | null;
-  setUser: (user: User | null) => void;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -66,14 +62,16 @@ export function GlobalContextProvider({
   const [currentDate, setCurrentDate] = useState(new Date());
   const [user, setUser] = useState<User | null>(null);
 
+  const { data: userData, error: userError } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: () => fetch(`/api/auth/getUser`).then((res) => res.json()),
+  });
+
   useEffect(() => {
-    const fetchUser = async () => {
-      const response = await fetch("/api/auth/getUser");
-      const data = await response.json();
-      setUser(data);
-    };
-    fetchUser();
-  }, []);
+    if (userData) {
+      setUser(userData);
+    }
+  }, [userData]);
 
   const handleDatePrev = () => {
     switch (activeDateOption) {
