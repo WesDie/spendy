@@ -84,3 +84,11 @@ export const updateAccountNotificationsSchema = z.object({
 export type UpdateAccountNotificationsSchema = z.infer<
   typeof updateAccountNotificationsSchema
 >;
+
+export const updateAccountPreferencesSchema = z.object({
+  currency: z.string(),
+});
+
+export type UpdateAccountPreferencesSchema = z.infer<
+  typeof updateAccountPreferencesSchema
+>;
