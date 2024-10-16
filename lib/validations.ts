@@ -42,3 +42,12 @@ export const updateTransactionSchema = z.object({
 });
 
 export type UpdateTransactionSchema = z.infer<typeof updateTransactionSchema>;
+
+export const updateDisplayNameSchema = z.object({
+  displayName: z
+    .string()
+    .min(1, "Display name is required")
+    .max(32, "Display name must be less than 32 characters"),
+});
+
+export type UpdateDisplayNameSchema = z.infer<typeof updateDisplayNameSchema>;

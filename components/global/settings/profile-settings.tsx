@@ -1,89 +1,91 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+"use client";
+import * as React from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UpdateDisplayNameSchema } from "@/lib/validations";
+import { useForm } from "react-hook-form";
+import { updateDisplayNameSchema } from "@/lib/validations";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+
+import SettingsCard from "./elements/settings-card";
 import UserAvatar from "../elements/avatar";
+import DisplayNameForm from "./forms/display-name-form";
 
 export default function ProfileSettings() {
+  const queryClient = useQueryClient();
+  const [isPending, startTransition] = React.useTransition();
+  const { user } = useGlobalContext();
+
+  const updateDisplayNameForm = useForm<UpdateDisplayNameSchema>({
+    resolver: zodResolver(updateDisplayNameSchema),
+    defaultValues: {
+      displayName: user?.name || "",
+    },
+  });
+
+  React.useEffect(() => {
+    updateDisplayNameForm.reset({ displayName: user?.name || "" });
+  }, [user?.name]);
+
+  const onSubmit = async (data: UpdateDisplayNameSchema) => {
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/auth/updateProfile", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userData: {
+              ...user,
+              name: data.displayName,
+            },
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error?.message || "Failed to update display name"
+          );
+        }
+
+        toast.success("Display name updated successfully");
+        queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? `Server: ${error.message}`
+            : "Server: An error occurred"
+        );
+      }
+    });
+  };
+
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Avatar</CardTitle>
-          <CardDescription>Change your avatar.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <UserAvatar isChangeable size="large" />
-          <Separator />
-          <div className="flex justify-between gap-2 h-9">
-            <Label
-              htmlFor="avatar"
-              className="text-muted-foreground my-auto font-normal"
-            >
-              An avatar is optional but strongly recommended.
-            </Label>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Display name</CardTitle>
-          <CardDescription>Change your display name.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <Input
-            type="text"
-            id="display-name"
-            placeholder="Enter your display name"
-            className="w-[400px]"
-          />
-          <Separator />
-          <div className="flex justify-between gap-2 h-9">
-            <Label
-              htmlFor="display-name"
-              className="text-muted-foreground my-auto font-normal hidden sm:block"
-            >
-              Your display name is how you appear to others on the platform.
-            </Label>
-            <Button className="w-fit" disabled>
-              Change display name
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Bio</CardTitle>
-          <CardDescription>Change your bio.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <Input
-            type="text"
-            id="bio"
-            placeholder="Enter your bio"
-            className="w-[400px]"
-          />
-          <Separator />
-          <div className="flex justify-between gap-2 h-9">
-            <Label
-              htmlFor="bio"
-              className="text-muted-foreground my-auto font-normal hidden sm:block"
-            >
-              Your bio is optional and can be used to give more information.
-            </Label>
-            <Button className="w-fit" disabled>
-              Change bio
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <SettingsCard
+        title="Avatar"
+        description="Change your avatar."
+        label="An avatar is optional but strongly recommended."
+      >
+        <UserAvatar isChangeable size="large" />
+      </SettingsCard>
+      <SettingsCard
+        title="Display Name"
+        description="This is the name that will be displayed to other users."
+        label="Changes to your display name will be reflected across your account."
+        formProps={{
+          component: <DisplayNameForm form={updateDisplayNameForm} />,
+          buttonText: "Update Display Name",
+          onSubmit: onSubmit,
+          isPending: isPending,
+          form: updateDisplayNameForm,
+        }}
+      />
     </>
   );
 }
