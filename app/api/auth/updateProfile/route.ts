@@ -63,24 +63,24 @@ function validateUpdateUserData(userData: User): {
   fields: string[];
 } | null {
   if (!userData.name)
-    return { message: "User name is required", fields: ["name"] };
+    return { message: "Display name is required", fields: ["name"] };
   if (userData.name.length > 100)
     return {
-      message: "User name must be less than 100 characters",
+      message: "Display name must be less than 100 characters",
       fields: ["name"],
     };
   if (!userData.first_name)
-    return { message: "User first name is required", fields: ["first_name"] };
+    return { message: "First name is required", fields: ["first_name"] };
   if (userData.first_name.length > 100)
     return {
-      message: "User first name must be less than 100 characters",
+      message: "First name must be less than 100 characters",
       fields: ["first_name"],
     };
   if (!userData.last_name)
-    return { message: "User last name is required", fields: ["last_name"] };
+    return { message: "Last name is required", fields: ["last_name"] };
   if (userData.last_name.length > 100)
     return {
-      message: "User last name must be less than 100 characters",
+      message: "Last name must be less than 100 characters",
       fields: ["last_name"],
     };
   return null;
