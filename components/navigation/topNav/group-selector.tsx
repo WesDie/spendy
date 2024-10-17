@@ -81,7 +81,13 @@ export function GroupSelector() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <Command>
+        <Command
+          defaultValue={`${currentGroup?.name}${
+            currentGroup?.duplicateIndex
+              ? ` (${currentGroup?.duplicateIndex})`
+              : ""
+          }`}
+        >
           <CommandList>
             {groups && (
               <>
@@ -111,7 +117,7 @@ export function GroupSelector() {
                                 key={group.id}
                                 value={`${group.name}${
                                   group.duplicateIndex
-                                    ? `:${group.duplicateIndex}`
+                                    ? ` (${group.duplicateIndex})`
                                     : ""
                                 }`}
                                 onSelect={() => {
