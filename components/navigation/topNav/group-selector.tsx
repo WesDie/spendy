@@ -51,6 +51,7 @@ export function GroupSelector() {
       } else {
         const personalGroup = groups.find((group) => group.type === "Personal");
         setCurrentGroup(personalGroup || null);
+        router.push("/");
       }
     }
   }, [groups, pathname, setCurrentGroup, currentGroup]);
