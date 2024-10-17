@@ -23,7 +23,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <main className="flex flex-col gap-6 h-full w-full p-6 px-4 md:p-8">
+    <main className="flex flex-col gap-6 h-full w-full">
       <div className="flex flex-col gap-2">
         <h3 className="text-xl sm:text-3xl font-semibold">Settings</h3>
         <p className="text-sm text-muted-foreground">

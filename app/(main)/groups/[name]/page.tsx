@@ -1,22 +1,14 @@
 "use client";
+import MainOverview from "@/components/global/pages/overview/main-overview";
+import OverviewSkeleton from "@/components/global/pages/overview/overview-skeleton";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 export default function GroupPage() {
   const { currentGroup } = useGlobalContext();
 
   if (!currentGroup) {
-    return (
-      <div className="flex flex-col h-full w-full">
-        <h3 className="text-2xl text-muted-foreground m-auto">Loading...</h3>
-      </div>
-    );
+    return <OverviewSkeleton />;
   }
 
-  return (
-    <div className="flex flex-col h-full w-full">
-      <h3 className="text-2xl text-muted-foreground m-auto">
-        Overview page ({currentGroup?.name}) ({currentGroup?.id})
-      </h3>
-    </div>
-  );
+  return <MainOverview />;
 }

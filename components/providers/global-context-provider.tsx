@@ -12,14 +12,7 @@ import {
   endOfMonth,
 } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import { User } from "@/types/database-types";
-
-type Group = {
-  id: number;
-  name: string;
-  icon: string;
-  type: "Personal" | "External";
-};
+import { User, Group } from "@/types/database-types";
 
 type DateOption = "month" | "halfyear" | "year" | "total";
 

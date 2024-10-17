@@ -14,28 +14,24 @@ export default function Categories() {
 
   if (!transactions) {
     return (
-      <main className="flex flex-col h-full w-full p-6 px-4 md:p-8">
-        <div className="flex flex-col h-full w-full gap-6 md:gap-10">
-          <h3 className="text-xl sm:text-3xl font-semibold">Categories</h3>
-          <div className="flex flex-col gap-4 w-full">
-            <Skeleton className="h-[300px] w-full" />
-          </div>
+      <div className="flex flex-col h-full w-full gap-6 md:gap-10">
+        <h3 className="text-xl sm:text-3xl font-semibold">Categories</h3>
+        <div className="flex flex-col gap-4 w-full">
+          <Skeleton className="h-[300px] w-full" />
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="flex flex-col h-full w-full p-6 px-4 md:p-8">
-      <div className="flex flex-col h-full w-full gap-6 md:gap-10">
-        <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
-          <h3 className="text-xl sm:text-3xl font-semibold">Categories</h3>
-          <DatePickerWithRange />
-        </div>
-        <div className="flex flex-col gap-4">
-          <CategoriesCard transactions={transactions} />
-        </div>
+    <div className="flex flex-col h-full w-full gap-6 md:gap-10">
+      <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
+        <h3 className="text-xl sm:text-3xl font-semibold">Categories</h3>
+        <DatePickerWithRange />
       </div>
-    </main>
+      <div className="flex flex-col gap-4">
+        <CategoriesCard transactions={transactions} />
+      </div>
+    </div>
   );
 }

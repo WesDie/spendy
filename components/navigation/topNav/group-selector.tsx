@@ -23,13 +23,7 @@ import { useDialogs } from "@/components/providers/dialogs-provider";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { usePathname } from "next/navigation";
-
-type Group = {
-  id: number;
-  name: string;
-  icon: string;
-  type: "Personal" | "External";
-};
+import { Group } from "@/types/database-types";
 
 export function GroupSelector() {
   const pathname = usePathname();
@@ -47,18 +41,10 @@ export function GroupSelector() {
 
   React.useEffect(() => {
     if (groups && groups.length > 0 && !currentGroup) {
-      const groupName = pathname.split("/").pop();
-      const [baseName, duplicateIndex] = groupName?.split(":") || [
-        groupName,
-        "",
-      ];
+      const pathSegments = pathname.split("/");
+      const groupName = pathSegments[pathSegments.length - 1];
       const targetGroup = groups.find((group) => {
-        return (
-          group.name === baseName &&
-          (!duplicateIndex ||
-            groups.filter((g) => g.name === baseName).indexOf(group) ===
-              parseInt(duplicateIndex) - 1)
-        );
+        return group.url === groupName;
       });
       if (targetGroup) {
         setCurrentGroup(targetGroup);
@@ -86,7 +72,10 @@ export function GroupSelector() {
               <AvatarImage src={currentGroup?.icon} />
               <AvatarFallback>{currentGroup?.name[0]}</AvatarFallback>
             </Avatar>
-            {currentGroup?.name || "Select group..."}
+            {currentGroup?.name +
+              (currentGroup?.duplicateIndex
+                ? ` (${currentGroup?.duplicateIndex})`
+                : "") || "Select group..."}
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -117,29 +106,20 @@ export function GroupSelector() {
                         {groups
                           .filter((group) => group.type === category)
                           .map((group) => {
-                            const duplicateIndex =
-                              groups.filter((g) => g.name === group.name)
-                                .length > 1
-                                ? groups
-                                    .filter((g) => g.name === group.name)
-                                    .indexOf(group) + 1
-                                : "";
                             return (
                               <CommandItem
                                 key={group.id}
-                                value={group.id.toString()}
+                                value={`${group.name}${
+                                  group.duplicateIndex
+                                    ? `:${group.duplicateIndex}`
+                                    : ""
+                                }`}
                                 onSelect={() => {
                                   setCurrentGroup(group);
                                   if (group.type === "Personal") {
                                     router.push("/");
                                   } else {
-                                    router.push(
-                                      `/groups/${group.name}${
-                                        duplicateIndex
-                                          ? `:${duplicateIndex}`
-                                          : ""
-                                      }`
-                                    );
+                                    router.push(`/groups/${group.url}`);
                                   }
                                   setOpen(false);
                                 }}
@@ -153,7 +133,9 @@ export function GroupSelector() {
                                     </AvatarFallback>
                                   </Avatar>
                                   {group.name}
-                                  {duplicateIndex ? ` (${duplicateIndex})` : ""}
+                                  {group.duplicateIndex
+                                    ? ` (${group.duplicateIndex})`
+                                    : ""}
                                 </div>
                                 <Check
                                   className={cn(

@@ -11,10 +11,14 @@ import OverviewSkeleton from "./overview-skeleton";
 import { CategoriesCard } from "@/components/global/elements/categories-card";
 
 export default function MainOverview() {
-  const { data: transactions, error: transactionsError } = useQuery({
-    queryKey: ["transactions", 17],
+  const { currentGroup } = useGlobalContext();
+
+  const { data: transactions } = useQuery({
+    queryKey: ["transactions", currentGroup?.id],
     queryFn: () =>
-      fetch(`/api/transactions/getAll?groupId=17`).then((res) => res.json()),
+      fetch(`/api/transactions/getAll?groupId=${currentGroup?.id}`).then(
+        (res) => res.json()
+      ),
   });
 
   const { getDateRange } = useGlobalContext();
@@ -50,7 +54,11 @@ export default function MainOverview() {
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">
       <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-0">
-        <h3 className="text-xl sm:text-3xl font-semibold">Overview</h3>
+        <h3 className="text-xl sm:text-3xl font-semibold">
+          {currentGroup?.type === "Personal"
+            ? "My Overview"
+            : `Group: ${currentGroup?.name}`}
+        </h3>
         <DatePickerWithRange />
       </div>
       <div className="flex flex-col gap-8 sm:gap-4">

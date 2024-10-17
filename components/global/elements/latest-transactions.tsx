@@ -8,12 +8,14 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { Transaction } from "@/types/database-types";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 export default function LatestTransactions({
   transactions,
 }: {
   transactions: Transaction[];
 }) {
+  const { currentGroup } = useGlobalContext();
   const latestTransactions = transactions
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
@@ -28,7 +30,11 @@ export default function LatestTransactions({
           </CardDescription>
         </div>
         <Link
-          href="/transactions"
+          href={
+            currentGroup?.type === "Personal"
+              ? "/transactions"
+              : `/groups/${currentGroup?.url}/transactions`
+          }
           className={buttonVariants({ variant: "outline" })}
         >
           View all transactions

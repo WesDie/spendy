@@ -1,16 +1,35 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 export function Links({ type }: { type: "mobile" | "desktop" }) {
   const pathname = usePathname();
+  const { currentGroup } = useGlobalContext();
 
-  const links = [
-    { href: "/", label: "Overview" },
-    { href: "/transactions", label: "Transactions" },
-    { href: "/categories", label: "Categories" },
-    { href: "/recurring", label: "Recurring", disabled: true },
-    { href: "/group-settings", label: "Settings", disabled: true },
-  ];
+  let links: { href: string; label: string; disabled?: boolean }[] = [];
+
+  if (currentGroup?.type === "Personal") {
+    links = [
+      { href: "/", label: "Overview" },
+      { href: "/transactions", label: "Transactions" },
+      { href: "/categories", label: "Categories" },
+      { href: "/recurring", label: "Recurring", disabled: true },
+      { href: "/group-settings", label: "Settings", disabled: true },
+    ];
+  } else {
+    links = [
+      { href: `/groups/${currentGroup?.url}`, label: "Overview" },
+      {
+        href: `/groups/${currentGroup?.url}/transactions`,
+        label: "Transactions",
+      },
+      {
+        href: `/groups/${currentGroup?.url}/settings`,
+        label: "Settings",
+        disabled: true,
+      },
+    ];
+  }
 
   return (
     <nav

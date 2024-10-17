@@ -33,6 +33,16 @@ export async function GET(req: NextRequest) {
       .getPublicUrl(`${group.icon || "default.jpg"}`);
 
     group.icon = imgUrl.publicUrl;
+
+    const duplicateIndex =
+      data.filter((g) => g.name === group.name).length > 1
+        ? data.filter((g) => g.name === group.name).indexOf(group) + 1
+        : "";
+
+    group.url = `${group.name.replace(/\s+/g, "-").toLowerCase()}${
+      duplicateIndex ? `:${duplicateIndex}` : ""
+    }`;
+    group.duplicateIndex = duplicateIndex;
   }
 
   return NextResponse.json(data, { status: 200 });

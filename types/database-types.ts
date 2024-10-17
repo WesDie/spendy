@@ -40,3 +40,12 @@ export type User = {
   last_name: string;
   avatar_url: string;
 };
+
+export type Group = {
+  id: number;
+  name: string;
+  icon: string;
+  type: "Personal" | "External";
+  url: string;
+  duplicateIndex: number;
+};

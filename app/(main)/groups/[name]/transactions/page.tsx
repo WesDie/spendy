@@ -1,13 +1,19 @@
 "use client";
+
 import TransactionTable from "@/components/global/elements/transaction-table";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Transactions() {
-  const { data: transactions, error: transactionsError } = useQuery({
-    queryKey: ["transactions", 17],
+  const { currentGroup } = useGlobalContext();
+
+  const { data: transactions } = useQuery({
+    queryKey: ["transactions", currentGroup?.id],
     queryFn: () =>
-      fetch(`/api/transactions/getAll?groupId=17`).then((res) => res.json()),
+      fetch(`/api/transactions/getAll?groupId=${currentGroup?.id}`).then(
+        (res) => res.json()
+      ),
   });
 
   if (!transactions) {

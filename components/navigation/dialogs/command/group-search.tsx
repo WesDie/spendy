@@ -6,13 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useCommandMenu } from "@/components/providers/command-menu-provider";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
-
-interface Group {
-  id: number;
-  name: string;
-  type: "Personal" | "External";
-  icon: string;
-}
+import { Group } from "@/types/database-types";
 
 export function GroupSearch() {
   const { data: groups, isLoading } = useQuery<Group[], Error>({
@@ -47,29 +41,18 @@ export function GroupSearch() {
                 {groups
                   .filter((group) => group.type === category)
                   .map((group) => {
-                    const duplicateIndex =
-                      groups.filter((g) => g.name === group.name).length > 1
-                        ? groups
-                            .filter((g) => g.name === group.name)
-                            .indexOf(group) + 1
-                        : "";
                     return (
                       <CommandItem
                         key={group.id}
-                        value={
-                          group.name +
-                          (duplicateIndex ? ` (${duplicateIndex})` : "")
-                        }
+                        value={`${group.name}${
+                          group.duplicateIndex ? `:${group.duplicateIndex}` : ""
+                        }`}
                         onSelect={() => {
                           setCurrentGroup(group);
                           if (group.type === "Personal") {
                             router.push("/");
                           } else {
-                            router.push(
-                              `/groups/${group.name}${
-                                duplicateIndex ? `:${duplicateIndex}` : ""
-                              }`
-                            );
+                            router.push(`/groups/${group.url}`);
                           }
                           openDialog(null);
                         }}
@@ -77,7 +60,9 @@ export function GroupSearch() {
                         <AlignEndHorizontal className="mr-2 h-4 w-4" />
                         <span>
                           {group.name}
-                          {duplicateIndex ? ` (${duplicateIndex})` : ""}
+                          {group.duplicateIndex
+                            ? ` (${group.duplicateIndex})`
+                            : ""}
                         </span>
                       </CommandItem>
                     );

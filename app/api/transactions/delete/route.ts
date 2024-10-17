@@ -12,8 +12,6 @@ export async function DELETE(req: NextRequest) {
 
   const { transactionData } = await req.json();
 
-  console.log(transactionData);
-
   // Validate transaction data
   const validationError = validateTransactionData(transactionData);
   if (validationError) {

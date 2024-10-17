@@ -17,7 +17,9 @@ export default function RootLayout({
           <ShortcutsProvider>
             <main className="w-full h-full flex flex-col pt-[69px] overflow-hidden">
               <TopNavBar />
-              {children}
+              <main className="flex flex-col h-full w-full p-6 px-4 md:p-8">
+                {children}
+              </main>
             </main>
             <Toaster />
           </ShortcutsProvider>
