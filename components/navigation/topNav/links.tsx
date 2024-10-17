@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function Links({ type }: { type: "mobile" | "desktop" }) {
   const pathname = usePathname();
@@ -29,6 +30,22 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
         disabled: true,
       },
     ];
+  }
+
+  if (!currentGroup) {
+    return (
+      <nav
+        className={`${
+          type === "mobile"
+            ? "flex gap-4 text-sm"
+            : "hidden md:flex md:flex-row md:items-center md:gap-3 md:text-sm lg:gap-4"
+        }`}
+      >
+        {links.map((link) => (
+          <Skeleton key={link.label} className="h-5 w-20" />
+        ))}
+      </nav>
+    );
   }
 
   return (
