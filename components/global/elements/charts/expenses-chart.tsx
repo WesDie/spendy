@@ -6,21 +6,24 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
+  TooltipProps,
 } from "recharts";
 import { format } from "date-fns";
-import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartTooltip } from "@/components/ui/chart";
 import { getTimeFormat } from "@/components/global/utils/charts";
 
 interface ExpenseChartProps {
   data: any[];
   activeDateOption: string;
   aggregationType: string;
+  customTooltip?: (props: TooltipProps<number, string>) => React.ReactNode;
 }
 
 export const ExpenseChart: React.FC<ExpenseChartProps> = ({
   data,
   activeDateOption,
   aggregationType,
+  customTooltip,
 }) => (
   <ResponsiveContainer width="100%" height="100%">
     <BarChart
@@ -33,6 +36,24 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({
         bottom: 12,
       }}
     >
+      <defs>
+        <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.8} />
+          <stop
+            offset="95%"
+            stopColor="hsl(var(--chart-1))"
+            stopOpacity={0.2}
+          />
+        </linearGradient>
+        <linearGradient id="expenseGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.8} />
+          <stop
+            offset="95%"
+            stopColor="hsl(var(--chart-2))"
+            stopOpacity={0.2}
+          />
+        </linearGradient>
+      </defs>
       <CartesianGrid vertical={false} />
       <XAxis
         dataKey="date"
@@ -57,10 +78,20 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({
       />
       <ChartTooltip
         cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
-        content={<ChartTooltipContent indicator="dot" />}
+        content={customTooltip}
       />
-      <Bar dataKey="expenses" fill="var(--color-expenses)" />
-      <Bar dataKey="income" fill="var(--color-income)" />
+      <Bar
+        dataKey="expenses"
+        fill="url(#expenseGradient)"
+        stroke="var(--color-expenses)"
+        strokeOpacity={0}
+      />
+      <Bar
+        dataKey="income"
+        fill="url(#incomeGradient)"
+        stroke="var(--color-income)"
+        strokeOpacity={0}
+      />
     </BarChart>
   </ResponsiveContainer>
 );

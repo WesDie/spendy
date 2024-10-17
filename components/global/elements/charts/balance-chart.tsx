@@ -4,21 +4,24 @@ import {
   AreaChart,
   CartesianGrid,
   ResponsiveContainer,
+  TooltipProps,
   XAxis,
   YAxis,
 } from "recharts";
 import { format } from "date-fns";
-import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartTooltip } from "@/components/ui/chart";
 import { getTimeFormat } from "@/components/global/utils/charts";
 
 interface BalanceChartProps {
   data: any[];
   activeDateOption: string;
+  customTooltip?: (props: TooltipProps<number, string>) => React.ReactNode;
 }
 
 export const BalanceChart: React.FC<BalanceChartProps> = ({
   data,
   activeDateOption,
+  customTooltip,
 }) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -62,10 +65,7 @@ export const BalanceChart: React.FC<BalanceChartProps> = ({
           tickMargin={8}
           tickFormatter={(value) => `$${value}`}
         />
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent indicator="dot" />}
-        />
+        <ChartTooltip cursor={false} content={customTooltip} />
         <Area
           dataKey="balance"
           type="monotone"

@@ -177,12 +177,14 @@ export default function FinanceChart({
                 <BalanceChart
                   data={activeChartData}
                   activeDateOption={activeDateOption}
+                  customTooltip={FinanceChartTooltip}
                 />
               ) : (
                 <ExpenseChart
                   data={activeChartData}
                   aggregationType={aggregationType}
                   activeDateOption={activeDateOption}
+                  customTooltip={FinanceChartTooltip}
                 />
               )}
             </ChartContainer>
@@ -191,4 +193,29 @@ export default function FinanceChart({
       </CardContent>
     </Card>
   );
+}
+
+export function FinanceChartTooltip({ active, payload, label }: any) {
+  if (active && payload && payload.length) {
+    return (
+      <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+        <span className="font-medium text-foreground">{label}</span>
+        {payload.map((item: any) => (
+          <p
+            key={item.name}
+            className="flex items-center gap-1 text-muted-foreground"
+          >
+            <span
+              className={`w-2 h-2 rounded-[2px]`}
+              style={{ backgroundColor: item.stroke }}
+            ></span>
+            {item.name.charAt(0).toUpperCase() + item.name.slice(1)}:
+            <span className="font-mono font-medium tabular-nums text-foreground">
+              ${item.value}
+            </span>
+          </p>
+        ))}
+      </div>
+    );
+  }
 }
