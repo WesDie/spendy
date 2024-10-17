@@ -1,5 +1,5 @@
 "use client";
-import MainOverview from "@/components/global/overview/main-overview";
+import MainOverview from "@/components/global/pages/overview/main-overview";
 
 export default function Home() {
   return (

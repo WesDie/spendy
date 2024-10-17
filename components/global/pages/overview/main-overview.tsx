@@ -1,14 +1,14 @@
-import { DatePickerWithRange } from "../elements/date-range-picker";
-import InformationCard from "../elements/information-card";
-import FinanceChart from "../elements/finance-chart";
-import LatestTransactions from "../elements/latest-transactions";
+import { DatePickerWithRange } from "@/components/global/elements/date-range-picker";
+import InformationCard from "@/components/global/elements/information-card";
+import FinanceChart from "@/components/global/elements/finance-chart";
+import LatestTransactions from "@/components/global/elements/latest-transactions";
 import { useQuery } from "@tanstack/react-query";
-import { getAllTransactionData } from "../utils/transactions";
+import { getAllTransactionData } from "@/components/global/utils/transactions";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { useEffect, useState } from "react";
 import { HandCoins, Percent, Wallet } from "lucide-react";
 import OverviewSkeleton from "./overview-skeleton";
-import { CategoriesCard } from "../elements/categories-card";
+import { CategoriesCard } from "@/components/global/elements/categories-card";
 
 export default function MainOverview() {
   const { data: transactions, error: transactionsError } = useQuery({
