@@ -15,7 +15,6 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
       { href: "/transactions", label: "Transactions" },
       { href: "/categories", label: "Categories" },
       { href: "/recurring", label: "Recurring", disabled: true },
-      { href: "/group-settings", label: "Settings", disabled: true },
     ];
   } else {
     links = [
@@ -23,6 +22,16 @@ export function Links({ type }: { type: "mobile" | "desktop" }) {
       {
         href: `/groups/${currentGroup?.url}/transactions`,
         label: "Transactions",
+      },
+      {
+        href: `/groups/${currentGroup?.url}/categories`,
+        label: "Categories",
+        disabled: true,
+      },
+      {
+        href: `/groups/${currentGroup?.url}/members`,
+        label: "Members",
+        disabled: true,
       },
       {
         href: `/groups/${currentGroup?.url}/settings`,
