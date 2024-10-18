@@ -35,7 +35,9 @@ export default function InformationCard({
           </div>
         </CardHeader>
         <CardContent>
-          {value !== null ? (
+          {isLoading ? (
+            <div className="text-2xl font-bold text-muted-foreground">---</div>
+          ) : value !== null ? (
             <div
               className={`text-2xl font-bold ${
                 value > 0 ? "text-green-500" : value < 0 ? "text-red-500" : ""

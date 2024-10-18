@@ -33,8 +33,7 @@ export function getAllTransactionData(
   const totalProfit =
     totalIncome === 0 || totalSpend === 0
       ? null
-      : Math.round(((totalIncome - totalSpend) / totalIncome) * 100 * 100) /
-        100;
+      : ((totalIncome + totalSpend) / totalIncome) * 100;
 
   return { totalIncome, totalSpend, totalProfit };
 }
