@@ -215,6 +215,7 @@ export default function TransactionTable() {
     pageSize,
     setPageNumber,
     totalTransactions,
+    currentGroup,
   } = useGlobalContext();
 
   const [sorting, setSorting] = React.useState<SortingState>([
@@ -227,6 +228,7 @@ export default function TransactionTable() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const { openDialog } = useDialogs();
+  let ready = transactions.length && !isLoading && currentGroup;
 
   const columns = React.useMemo(() => getColumns(), []);
 
@@ -269,27 +271,29 @@ export default function TransactionTable() {
           transition={{ duration: 0.5 }}
           className={`w-full ${isLoading ? "animate-pulse" : ""}`}
         >
-          <div className="flex items-center py-4 gap-2">
-            {/* <Input
+          {ready ? (
+            <div className="flex items-center py-4 gap-2">
+              {/* <Input
               placeholder="Filter transactions..."
               value={
                 (table.getColumn("title")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
+                }
+                onChange={(event) =>
                 table.getColumn("title")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            /> */}
-            <div className="ml-auto flex flex-row gap-2">
-              <Button
-                variant="outline"
-                onClick={() => openDialog("transactionDialog")}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Add transaction
-              </Button>
+                }
+                className="max-w-sm"
+                /> */}
+              <div className="ml-auto flex flex-row gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => openDialog("transactionDialog")}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add transaction
+                </Button>
+              </div>
             </div>
-          </div>
+          ) : null}
           <div className="rounded-md border">
             <Table>
               <TableHeader>
@@ -311,7 +315,7 @@ export default function TransactionTable() {
                 ))}
               </TableHeader>
               <TableBody>
-                {transactions.length || isLoading ? (
+                {ready ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
                       {row.getVisibleCells().map((cell) => (

@@ -108,36 +108,33 @@ export function CategoriesCard() {
     return config;
   }, [chartData]);
 
-  if (categoriesError) return <div>Error loading categories</div>;
-  if (!categories) return <div>Loading categories...</div>;
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isLoading ? 0.2 : 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className={isLoading ? "animate-pulse" : ""}
-    >
-      <Card className="flex flex-col justify-between">
-        <CardHeader className="flex-col gap-2 sm:gap-0 sm:flex-row justify-between">
-          <div className="space-y-1">
-            <CardTitle>Categories</CardTitle>
-            <CardDescription>
-              Your spending by category{" "}
-              {showPercentage ? "relative to budget" : "in total amount"}
-            </CardDescription>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="show-percentage"
-              checked={showPercentage}
-              onCheckedChange={setShowPercentage}
-            />
-            <Label htmlFor="show-percentage">Show percentage</Label>
-          </div>
-        </CardHeader>
-        <CardContent>
+    <Card className="flex flex-col justify-between">
+      <CardHeader className="flex-col gap-2 sm:gap-0 sm:flex-row justify-between">
+        <div className="space-y-1">
+          <CardTitle>Categories</CardTitle>
+          <CardDescription>
+            Your spending by category{" "}
+            {showPercentage ? "relative to budget" : "in total amount"}
+          </CardDescription>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="show-percentage"
+            checked={showPercentage}
+            onCheckedChange={setShowPercentage}
+          />
+          <Label htmlFor="show-percentage">Show percentage</Label>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isLoading ? 0.2 : 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className={isLoading ? "animate-pulse" : ""}
+        >
           <ChartContainer
             className="h-[300px] aspect-auto mt-auto"
             config={chartConfig}
@@ -188,9 +185,9 @@ export function CategoriesCard() {
               />
             </BarChart>
           </ChartContainer>
-        </CardContent>
-      </Card>
-    </motion.div>
+        </motion.div>
+      </CardContent>
+    </Card>
   );
 }
 
