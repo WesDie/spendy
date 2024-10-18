@@ -2,54 +2,40 @@ import { DatePickerWithRange } from "@/components/global/elements/date-range-pic
 import InformationCard from "@/components/global/elements/information-card";
 import FinanceChart from "@/components/global/elements/finance-chart";
 import LatestTransactions from "@/components/global/elements/latest-transactions";
-import { useQuery } from "@tanstack/react-query";
 import { getAllTransactionData } from "@/components/global/utils/transactions";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { useEffect, useState } from "react";
 import { HandCoins, Percent, Wallet } from "lucide-react";
-import OverviewSkeleton from "./overview-skeleton";
 import { CategoriesCard } from "@/components/global/elements/categories-card";
 
 export default function MainOverview() {
-  const { currentGroup } = useGlobalContext();
-
-  const { data: transactions } = useQuery({
-    queryKey: ["transactions", currentGroup?.id],
-    queryFn: () =>
-      fetch(`/api/transactions/getAll?groupId=${currentGroup?.id}`).then(
-        (res) => res.json()
-      ),
-  });
+  const { currentGroup, totalBalance, currentGroupTransactions } =
+    useGlobalContext();
 
   const { getDateRange } = useGlobalContext();
   const [transactionData, setTransactionData] = useState({
-    totalBalance: null,
     totalIncome: null,
     totalSpend: null,
     totalProfit: null,
   } as {
-    totalBalance: number | null;
     totalIncome: number | null;
     totalSpend: number | null;
     totalProfit: number | null;
   });
 
   useEffect(() => {
-    if (transactions) {
-      const { totalBalance, totalIncome, totalSpend, totalProfit } =
-        getAllTransactionData(transactions, getDateRange());
+    if (currentGroupTransactions) {
+      const { totalIncome, totalSpend, totalProfit } = getAllTransactionData(
+        currentGroupTransactions,
+        getDateRange()
+      );
       setTransactionData({
-        totalBalance,
         totalIncome,
         totalSpend,
         totalProfit,
       });
     }
-  }, [transactions, getDateRange]);
-
-  if (!transactions) {
-    return <OverviewSkeleton />;
-  }
+  }, [currentGroupTransactions, getDateRange]);
 
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">
@@ -63,10 +49,7 @@ export default function MainOverview() {
       </div>
       <div className="flex flex-col gap-8 sm:gap-4">
         <div className="w-full grid grid-rows-4 md:grid-rows-none md:grid-cols-4 gap-4">
-          <InformationCard
-            title="Current Balance"
-            value={transactionData.totalBalance}
-          />
+          <InformationCard title="Current Balance" value={totalBalance} />
           <InformationCard
             title="Total Expenses"
             value={transactionData.totalSpend}
@@ -84,10 +67,10 @@ export default function MainOverview() {
             icon={<Percent />}
           />
         </div>
-        {transactions && <FinanceChart transactions={transactions} />}
+        {currentGroupTransactions && <FinanceChart />}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-4">
-          {transactions && <LatestTransactions transactions={transactions} />}
-          {transactions && <CategoriesCard transactions={transactions} />}
+          {currentGroupTransactions && <LatestTransactions />}
+          {currentGroupTransactions && <CategoriesCard />}
         </div>
       </div>
     </div>

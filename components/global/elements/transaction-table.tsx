@@ -50,6 +50,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import TransactionSheet from "@/components/navigation/sheet/edit/transaction-sheet";
 import { DeleteTransactionDialog } from "@/components/navigation/dialogs/alert/delete-transaction-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { motion } from "framer-motion";
 
 export const getColumns = (): ColumnDef<Transaction>[] => [
   {
@@ -204,11 +207,16 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
   },
 ];
 
-export default function TransactionTable({
-  transactions,
-}: {
-  transactions: Transaction[];
-}) {
+export default function TransactionTable() {
+  const {
+    currentGroupTransactions: transactions,
+    isTransactionsLoading: isLoading,
+    currentPage,
+    pageSize,
+    setPageNumber,
+    totalTransactions,
+  } = useGlobalContext();
+
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "date", desc: true },
   ]);
@@ -223,7 +231,7 @@ export default function TransactionTable({
   const columns = React.useMemo(() => getColumns(), []);
 
   const table = useReactTable({
-    data: transactions as Transaction[],
+    data: transactions,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -233,18 +241,17 @@ export default function TransactionTable({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 50,
-      },
-      sorting: sorting,
-    },
+    manualPagination: true,
+    pageCount: Math.ceil(totalTransactions / pageSize),
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination: {
+        pageIndex: currentPage - 1,
+        pageSize: pageSize,
+      },
     },
   });
 
@@ -255,9 +262,15 @@ export default function TransactionTable({
         <CardDescription>View of all your transactions.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="w-full">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isLoading ? 0.2 : 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className={`w-full ${isLoading ? "animate-pulse" : ""}`}
+        >
           <div className="flex items-center py-4 gap-2">
-            <Input
+            {/* <Input
               placeholder="Filter transactions..."
               value={
                 (table.getColumn("title")?.getFilterValue() as string) ?? ""
@@ -266,7 +279,7 @@ export default function TransactionTable({
                 table.getColumn("title")?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
-            />
+            /> */}
             <div className="ml-auto flex flex-row gap-2">
               <Button
                 variant="outline"
@@ -298,7 +311,7 @@ export default function TransactionTable({
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows?.length ? (
+                {transactions.length || isLoading ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
                       {row.getVisibleCells().map((cell) => (
@@ -312,43 +325,55 @@ export default function TransactionTable({
                     </TableRow>
                   ))
                 ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
+                  <>
+                    {Array.from({ length: pageSize }, (_, index) => (
+                      <TableRow key={index}>
+                        <TableCell
+                          colSpan={columns.length}
+                          className="h-[49px] text-center"
+                        >
+                          <Skeleton className="h-4 w-full" />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </>
                 )}
               </TableBody>
             </Table>
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="flex-1 text-sm text-muted-foreground">
-              {table.getRowModel().rows.length} of{" "}
-              {table.getFilteredRowModel().rows.length} row(s) visible.
+              {totalTransactions} total rows
             </div>
             <div className="space-x-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() => {
+                  table.previousPage();
+                  if (table.getCanPreviousPage()) {
+                    setPageNumber(currentPage - 1);
+                  }
+                }}
+                disabled={!table.getCanPreviousPage() || isLoading}
               >
                 Previous
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
+                onClick={() => {
+                  if (table.getCanNextPage()) {
+                    setPageNumber(currentPage + 1);
+                  }
+                }}
+                disabled={!table.getCanNextPage() || isLoading}
               >
                 Next
               </Button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </CardContent>
     </Card>
   );

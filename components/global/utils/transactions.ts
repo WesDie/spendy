@@ -4,13 +4,6 @@ export function getAllTransactionData(
   transactions: Transaction[],
   timeframe: { startDate: Date; endDate: Date }
 ) {
-  const totalBalance = transactions.reduce(
-    (acc: number, transaction: Transaction) => {
-      return acc + transaction.amount;
-    },
-    0
-  );
-
   const totalIncome = transactions.reduce(
     (acc: number, transaction: Transaction) => {
       const transactionDate = new Date(transaction.date);
@@ -43,5 +36,5 @@ export function getAllTransactionData(
       : Math.round(((totalIncome - totalSpend) / totalIncome) * 100 * 100) /
         100;
 
-  return { totalBalance, totalIncome, totalSpend, totalProfit };
+  return { totalIncome, totalSpend, totalProfit };
 }

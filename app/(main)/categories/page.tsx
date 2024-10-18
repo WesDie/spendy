@@ -3,16 +3,17 @@
 import { CategoriesCard } from "@/components/global/elements/categories-card";
 import { DatePickerWithRange } from "@/components/global/elements/date-range-picker";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
+import { useGlobalContext } from "@/components/providers/global-context-provider";
+import { useEffect } from "react";
 
 export default function Categories() {
-  const { data: transactions, error: transactionsError } = useQuery({
-    queryKey: ["transactions", 17],
-    queryFn: () =>
-      fetch(`/api/transactions/getAll?groupId=17`).then((res) => res.json()),
-  });
+  const { currentGroup, setActiveDateOption } = useGlobalContext();
 
-  if (!transactions) {
+  useEffect(() => {
+    setActiveDateOption("month");
+  }, [setActiveDateOption]);
+
+  if (!currentGroup) {
     return (
       <div className="flex flex-col h-full w-full gap-6 md:gap-10">
         <h3 className="text-xl sm:text-3xl font-semibold">Categories</h3>
@@ -30,7 +31,7 @@ export default function Categories() {
         <DatePickerWithRange />
       </div>
       <div className="flex flex-col gap-4">
-        <CategoriesCard transactions={transactions} />
+        <CategoriesCard />
       </div>
     </div>
   );

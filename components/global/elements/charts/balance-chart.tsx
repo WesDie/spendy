@@ -15,19 +15,32 @@ import { getTimeFormat } from "@/components/global/utils/charts";
 interface BalanceChartProps {
   data: any[];
   activeDateOption: string;
+  balanceBeforePeriod: number;
   customTooltip?: (props: TooltipProps<number, string>) => React.ReactNode;
 }
 
 export const BalanceChart: React.FC<BalanceChartProps> = ({
   data,
   activeDateOption,
+  balanceBeforePeriod,
   customTooltip,
 }) => {
+  const chartData = React.useMemo(() => {
+    let runningBalance = balanceBeforePeriod;
+    return data.map((item) => {
+      runningBalance += item.income - item.expenses;
+      return {
+        ...item,
+        balance: runningBalance,
+      };
+    });
+  }, [data, balanceBeforePeriod]);
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart
         accessibilityLayer
-        data={data}
+        data={chartData}
         margin={{
           left: 0,
           right: 12,

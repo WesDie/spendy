@@ -12,7 +12,7 @@ import {
   endOfMonth,
 } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import { User, Group } from "@/types/database-types";
+import { User, Group, Transaction } from "@/types/database-types";
 
 type DateOption = "month" | "halfyear" | "year" | "total";
 
@@ -31,6 +31,18 @@ type GlobalContextType = {
   isPrevDateDisabled: () => boolean;
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  currentGroupTransactions: Transaction[];
+  loadMoreTransactions: () => void;
+  totalBalance: number;
+  totalTransactions: number;
+  currentPage: number;
+  pageSize: number;
+  isTransactionsLoading: boolean;
+  balanceBeforePeriod: number;
+  recentTransactions: Transaction[];
+  setRecentTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
+  setBalanceBeforePeriod: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: (pageNumber: number) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -54,6 +66,15 @@ export function GlobalContextProvider({
   const [activeDateOption, setActiveDateOption] = useState<DateOption>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [user, setUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 25;
+  const [currentGroupTransactions, setCurrentGroupTransactions] = useState<
+    Transaction[]
+  >([]);
+  const [balanceBeforePeriod, setBalanceBeforePeriod] = useState(0);
+  const [recentTransactions, setRecentTransactions] = useState<Transaction[]>(
+    []
+  );
 
   const { data: userData, error: userError } = useQuery({
     queryKey: ["userProfile"],
@@ -65,6 +86,37 @@ export function GlobalContextProvider({
       setUser(userData);
     }
   }, [userData]);
+
+  const { data: transactionsData, isLoading: isTransactionsLoading } = useQuery(
+    {
+      queryKey: [
+        "transactions",
+        currentGroup?.id,
+        activeDateOption,
+        currentDate,
+        currentPage,
+      ],
+      queryFn: async () => {
+        const { startDate, endDate } = getDateRange();
+        const response = await fetch(
+          `/api/transactions/get?groupId=${
+            currentGroup?.id
+          }&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&page=${currentPage}&pageSize=${pageSize}`
+        );
+        const data = await response.json();
+        setBalanceBeforePeriod(data.balanceBeforePeriod);
+        setRecentTransactions(data.recentTransactions);
+        return data;
+      },
+      enabled: !!currentGroup?.id,
+    }
+  );
+
+  useEffect(() => {
+    if (transactionsData) {
+      setCurrentGroupTransactions(transactionsData.transactions);
+    }
+  }, [transactionsData]);
 
   const handleDatePrev = () => {
     switch (activeDateOption) {
@@ -159,6 +211,14 @@ export function GlobalContextProvider({
     }
   };
 
+  const loadMoreTransactions = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const setPageNumber = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -176,6 +236,18 @@ export function GlobalContextProvider({
         isPrevDateDisabled,
         user,
         setUser,
+        currentGroupTransactions: currentGroupTransactions,
+        loadMoreTransactions,
+        totalBalance: transactionsData?.totalBalance || 0,
+        totalTransactions: transactionsData?.totalCount || 0,
+        currentPage,
+        pageSize,
+        isTransactionsLoading: isTransactionsLoading,
+        balanceBeforePeriod,
+        setBalanceBeforePeriod,
+        recentTransactions,
+        setRecentTransactions,
+        setPageNumber,
       }}
     >
       {children}

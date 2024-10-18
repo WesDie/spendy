@@ -49,17 +49,20 @@ const chartConfigs = {
   },
 };
 
-export default function FinanceChart({
-  transactions,
-}: {
-  transactions: Transaction[];
-}) {
+export default function FinanceChart() {
+  const {
+    activeDateOption,
+    getDateRange,
+    currentGroupTransactions: transactions,
+    isTransactionsLoading: isLoading,
+    balanceBeforePeriod,
+  } = useGlobalContext();
+
   const dailyChartData = getDailyChartData(transactions);
   const [activeView, setActiveView] = useState<"incomeExpenses" | "balance">(
     "incomeExpenses"
   );
   const [activeChartData, setActiveChartData] = useState(dailyChartData);
-  const { activeDateOption, getDateRange } = useGlobalContext();
   const [aggregationType, setAggregationType] = useState<
     "day" | "month" | "year"
   >("day");
@@ -168,7 +171,14 @@ export default function FinanceChart({
       </CardHeader>
       <CardContent className="p-1">
         <AnimatePresence mode="wait">
-          <motion.div key={activeView}>
+          <motion.div
+            key={activeView}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isLoading ? 0.2 : 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className={isLoading ? "animate-pulse" : ""}
+          >
             <ChartContainer
               config={currentConfig.config}
               className="h-[200px] aspect-auto"
@@ -177,6 +187,7 @@ export default function FinanceChart({
                 <BalanceChart
                   data={activeChartData}
                   activeDateOption={activeDateOption}
+                  balanceBeforePeriod={balanceBeforePeriod}
                   customTooltip={FinanceChartTooltip}
                 />
               ) : (

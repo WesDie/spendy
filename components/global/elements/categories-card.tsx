@@ -27,17 +27,20 @@ import { useMemo, useState } from "react";
 
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { firstTransactionDate } from "@/components/global/utils/charts";
 import { Category, Transaction } from "@/types/database-types";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { motion } from "framer-motion";
 
-export function CategoriesCard({
-  transactions,
-}: {
-  transactions: Transaction[];
-}) {
+export function CategoriesCard() {
+  const {
+    getDateRange,
+    currentGroup,
+    activeDateOption,
+    currentGroupTransactions: transactions,
+    isTransactionsLoading: isLoading,
+  } = useGlobalContext();
+
   const [showPercentage, setShowPercentage] = useState(true);
-  const { getDateRange, currentGroup, activeDateOption } = useGlobalContext();
   const isMobile = useMediaQuery("(max-width: 640px)");
 
   const { data: categories, error: categoriesError } = useQuery({
@@ -52,14 +55,8 @@ export function CategoriesCard({
     if (!categories || !transactions) return [];
 
     const { startDate, endDate } = getDateRange();
-    const filteredTransactions = transactions.filter(
-      (t) => new Date(t.date) >= startDate && new Date(t.date) <= endDate
-    );
 
     let firstTransactionDay = startDate;
-    if (activeDateOption === "total") {
-      firstTransactionDay = firstTransactionDate(filteredTransactions);
-    }
 
     const monthsInRange =
       (endDate.getFullYear() - firstTransactionDay.getFullYear()) * 12 +
@@ -68,7 +65,7 @@ export function CategoriesCard({
 
     return categories
       .map((category: Category) => {
-        const totalSpent = filteredTransactions
+        const totalSpent = transactions
           .filter((t) => t.category?.id === category.id)
           .reduce((sum, t) => sum + t.amount, 0);
 
@@ -115,77 +112,85 @@ export function CategoriesCard({
   if (!categories) return <div>Loading categories...</div>;
 
   return (
-    <Card className="flex flex-col justify-between">
-      <CardHeader className="flex-col gap-2 sm:gap-0 sm:flex-row justify-between">
-        <div className="space-y-1">
-          <CardTitle>Categories</CardTitle>
-          <CardDescription>
-            Your spending by category{" "}
-            {showPercentage ? "relative to budget" : "in total amount"}
-          </CardDescription>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="show-percentage"
-            checked={showPercentage}
-            onCheckedChange={setShowPercentage}
-          />
-          <Label htmlFor="show-percentage">Show percentage</Label>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer
-          className="h-[300px] aspect-auto mt-auto"
-          config={chartConfig}
-        >
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout="vertical"
-            margin={
-              isMobile
-                ? { top: 20, right: 0, left: 0, bottom: 5 }
-                : { top: 20, right: 75, left: 70, bottom: 5 }
-            }
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isLoading ? 0.2 : 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className={isLoading ? "animate-pulse" : ""}
+    >
+      <Card className="flex flex-col justify-between">
+        <CardHeader className="flex-col gap-2 sm:gap-0 sm:flex-row justify-between">
+          <div className="space-y-1">
+            <CardTitle>Categories</CardTitle>
+            <CardDescription>
+              Your spending by category{" "}
+              {showPercentage ? "relative to budget" : "in total amount"}
+            </CardDescription>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="show-percentage"
+              checked={showPercentage}
+              onCheckedChange={setShowPercentage}
+            />
+            <Label htmlFor="show-percentage">Show percentage</Label>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer
+            className="h-[300px] aspect-auto mt-auto"
+            config={chartConfig}
           >
-            <CartesianGrid horizontal={false} />
-            <YAxis
-              dataKey="category"
-              type="category"
-              width={60}
-              tickLine={false}
-              axisLine={false}
-            />
-            <XAxis
-              type="number"
-              tickLine={false}
-              axisLine={false}
-              domain={[0, 200]}
-              tickFormatter={(value) =>
-                `${showPercentage ? value + "%" : "$" + value}`
+            <BarChart
+              accessibilityLayer
+              data={chartData}
+              layout="vertical"
+              margin={
+                isMobile
+                  ? { top: 20, right: 0, left: 0, bottom: 5 }
+                  : { top: 20, right: 75, left: 70, bottom: 5 }
               }
-            />
-            <ChartTooltip
-              cursor={{ fill: "transparent" }}
-              content={<CustomTooltip showPercentage={showPercentage} />}
-            />
-            {showPercentage && (
-              <ReferenceLine
-                x={100}
-                stroke="#666"
-                strokeDasharray="3 3"
-                style={{ strokeWidth: 2 }}
+            >
+              <CartesianGrid horizontal={false} />
+              <YAxis
+                dataKey="category"
+                type="category"
+                width={60}
+                tickLine={false}
+                axisLine={false}
               />
-            )}
-            <Bar
-              dataKey={showPercentage ? "percentageSpent" : "spent"}
-              label={<CustomLabel showPercentage={showPercentage} />}
-              radius={[0, 4, 4, 0]}
-            />
-          </BarChart>
-        </ChartContainer>
-      </CardContent>
-    </Card>
+              <XAxis
+                type="number"
+                tickLine={false}
+                axisLine={false}
+                domain={[0, 200]}
+                tickFormatter={(value) =>
+                  `${showPercentage ? value + "%" : "$" + value}`
+                }
+              />
+              <ChartTooltip
+                cursor={{ fill: "transparent" }}
+                content={<CustomTooltip showPercentage={showPercentage} />}
+              />
+              {showPercentage && (
+                <ReferenceLine
+                  x={100}
+                  stroke="#666"
+                  strokeDasharray="3 3"
+                  style={{ strokeWidth: 2 }}
+                />
+              )}
+              <Bar
+                dataKey={showPercentage ? "percentageSpent" : "spent"}
+                label={<CustomLabel showPercentage={showPercentage} />}
+                radius={[0, 4, 4, 0]}
+              />
+            </BarChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
