@@ -27,7 +27,7 @@ import { useMemo, useState } from "react";
 
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Category, Transaction } from "@/types/database-types";
+import { Category } from "@/types/database-types";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion } from "framer-motion";
 
@@ -182,6 +182,7 @@ export function CategoriesCard() {
                 dataKey={showPercentage ? "percentageSpent" : "spent"}
                 label={<CustomLabel showPercentage={showPercentage} />}
                 radius={[0, 4, 4, 0]}
+                fillOpacity={0.8}
               />
             </BarChart>
           </ChartContainer>

@@ -20,21 +20,21 @@ export default function InformationCard({
   const { isTransactionsLoading: isLoading } = useGlobalContext();
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isLoading ? 0.2 : 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className={isLoading ? "animate-pulse" : ""}
-    >
-      <Card x-chunk="dashboard-01-chunk-0">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-2">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          <div className="flex items-center gap-2 text-muted-foreground w-4 h-4">
-            {icon}
-          </div>
-        </CardHeader>
-        <CardContent>
+    <Card x-chunk="dashboard-01-chunk-0">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <div className="flex items-center gap-2 text-muted-foreground w-4 h-4">
+          {icon}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isLoading ? 0.2 : 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className={isLoading ? "animate-pulse" : ""}
+        >
           {isLoading ? (
             <div className="text-2xl font-bold text-muted-foreground">---</div>
           ) : value !== null ? (
@@ -69,8 +69,8 @@ export default function InformationCard({
             <div className="text-2xl font-bold text-muted-foreground">---</div>
           )}
           {change && <p className="text-xs text-muted-foreground">{change}</p>}
-        </CardContent>
-      </Card>
-    </motion.div>
+        </motion.div>
+      </CardContent>
+    </Card>
   );
 }
