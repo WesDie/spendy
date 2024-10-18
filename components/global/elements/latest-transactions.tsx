@@ -7,14 +7,13 @@ import {
 } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import { Transaction } from "@/types/database-types";
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 import { motion } from "framer-motion";
 
 export default function LatestTransactions() {
   const {
     currentGroup,
-    currentGroupTransactions: transactions,
+    recentTransactions: transactions,
     isTransactionsLoading: isLoading,
   } = useGlobalContext();
 
