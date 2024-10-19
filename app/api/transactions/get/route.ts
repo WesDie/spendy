@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
   const page = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("pageSize") || "50");
+  const pageSize = parseInt(searchParams.get("pageSize") || "1000");
 
   const supabase = createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();

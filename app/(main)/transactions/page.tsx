@@ -4,11 +4,12 @@ import { useGlobalContext } from "@/components/providers/global-context-provider
 import { useEffect } from "react";
 
 export default function Transactions() {
-  const { setActiveDateOption } = useGlobalContext();
+  const { setActiveDateOption, setUsePageSize } = useGlobalContext();
 
   useEffect(() => {
     setActiveDateOption("total");
-  }, [setActiveDateOption]);
+    setUsePageSize(true);
+  }, [setActiveDateOption, setUsePageSize]);
 
   return (
     <div className="flex flex-col h-full w-full gap-6 md:gap-10">

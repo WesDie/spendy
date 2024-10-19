@@ -6,11 +6,13 @@ import OverviewSkeleton from "@/components/global/pages/overview/overview-skelet
 import { useGlobalContext } from "@/components/providers/global-context-provider";
 
 export default function GroupPage() {
-  const { currentGroup, setActiveDateOption } = useGlobalContext();
+  const { currentGroup, setActiveDateOption, setUsePageSize } =
+    useGlobalContext();
 
   useEffect(() => {
     setActiveDateOption("month");
-  }, [setActiveDateOption]);
+    setUsePageSize(false);
+  }, [setActiveDateOption, setUsePageSize]);
 
   if (!currentGroup) {
     return <OverviewSkeleton />;

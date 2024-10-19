@@ -7,11 +7,13 @@ import { useGlobalContext } from "@/components/providers/global-context-provider
 import { useEffect } from "react";
 
 export default function Categories() {
-  const { currentGroup, setActiveDateOption } = useGlobalContext();
+  const { currentGroup, setActiveDateOption, setUsePageSize } =
+    useGlobalContext();
 
   useEffect(() => {
     setActiveDateOption("month");
-  }, [setActiveDateOption]);
+    setUsePageSize(false);
+  }, [setActiveDateOption, setUsePageSize]);
 
   if (!currentGroup) {
     return (

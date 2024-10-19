@@ -43,6 +43,8 @@ type GlobalContextType = {
   setRecentTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
   setBalanceBeforePeriod: React.Dispatch<React.SetStateAction<number>>;
   setPageNumber: (pageNumber: number) => void;
+  usePageSize: boolean;
+  setUsePageSize: (usePageSize: boolean) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -75,6 +77,7 @@ export function GlobalContextProvider({
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>(
     []
   );
+  const [usePageSize, setUsePageSize] = useState(false);
 
   const { data: userData, error: userError } = useQuery({
     queryKey: ["userProfile"],
@@ -101,7 +104,9 @@ export function GlobalContextProvider({
         const response = await fetch(
           `/api/transactions/get?groupId=${
             currentGroup?.id
-          }&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&page=${currentPage}&pageSize=${pageSize}`
+          }&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}${
+            usePageSize ? `&page=${currentPage}&pageSize=${pageSize}` : ""
+          }`
         );
         const data = await response.json();
         setBalanceBeforePeriod(data.balanceBeforePeriod);
@@ -248,6 +253,8 @@ export function GlobalContextProvider({
         recentTransactions,
         setRecentTransactions,
         setPageNumber,
+        usePageSize,
+        setUsePageSize,
       }}
     >
       {children}

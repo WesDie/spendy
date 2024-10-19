@@ -5,11 +5,13 @@ import OverviewSkeleton from "@/components/global/pages/overview/overview-skelet
 import { useEffect } from "react";
 
 export default function Home() {
-  const { currentGroup, setActiveDateOption } = useGlobalContext();
+  const { currentGroup, setActiveDateOption, setUsePageSize } =
+    useGlobalContext();
 
   useEffect(() => {
     setActiveDateOption("month");
-  }, [setActiveDateOption]);
+    setUsePageSize(false);
+  }, [setActiveDateOption, setUsePageSize]);
 
   if (!currentGroup) {
     return <OverviewSkeleton />;
