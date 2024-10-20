@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import { Category } from "@/types/database-types";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion } from "framer-motion";
+import { firstTransactionDate } from "@/components/global/utils/charts";
 
 export function CategoriesCard() {
   const {
@@ -56,7 +57,10 @@ export function CategoriesCard() {
 
     const { startDate, endDate } = getDateRange();
 
-    let firstTransactionDay = startDate;
+    let firstTransactionDay =
+      activeDateOption === "total"
+        ? firstTransactionDate(transactions)
+        : startDate;
 
     const monthsInRange =
       (endDate.getFullYear() - firstTransactionDay.getFullYear()) * 12 +
@@ -110,7 +114,7 @@ export function CategoriesCard() {
 
   return (
     <Card className="flex flex-col justify-between">
-      <CardHeader className="flex-col gap-2 sm:gap-0 sm:flex-row justify-between">
+      <CardHeader className="flex-col justify-between gap-2 sm:gap-0 sm:flex-row">
         <div className="space-y-1">
           <CardTitle>Categories</CardTitle>
           <CardDescription>
@@ -210,7 +214,7 @@ const CustomTooltip = ({ active, payload, showPercentage }: any) => {
     }
 
     return (
-      <div className="bg-card p-2 border rounded space-y-1 shadow">
+      <div className="p-2 space-y-1 border rounded shadow bg-card">
         <p className="flex items-center gap-2">
           <span className={`text-${data.fill}-500`}>{data.icon}</span>
           {data.category}
