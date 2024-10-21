@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -74,15 +73,16 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
       return (
         <Button
           variant="ghost"
+          className="-ml-4"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Title
           {column.getIsSorted() === "asc" ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
+            <ArrowUp className="w-4 h-4 ml-2" />
           ) : column.getIsSorted() === "desc" ? (
-            <ArrowDown className="ml-2 h-4 w-4" />
+            <ArrowDown className="w-4 h-4 ml-2" />
           ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           )}
         </Button>
       );
@@ -95,15 +95,16 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
       return (
         <Button
           variant="ghost"
+          className="-ml-4"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Date
           {column.getIsSorted() === "asc" ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
+            <ArrowUp className="w-4 h-4 ml-2" />
           ) : column.getIsSorted() === "desc" ? (
-            <ArrowDown className="ml-2 h-4 w-4" />
+            <ArrowDown className="w-4 h-4 ml-2" />
           ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="w-4 h-4 ml-2" />
           )}
         </Button>
       );
@@ -119,7 +120,7 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
         <div className="flex flex-row justify-end">
           <Button
             variant="ghost"
-            className="ml-auto"
+            className="ml-auto -mr-4"
             onClick={() => {
               if (column.getIsSorted() === "asc") {
                 column.toggleSorting(true);
@@ -132,11 +133,11 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
           >
             Amount
             {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
+              <ArrowUp className="w-4 h-4 ml-2" />
             ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
+              <ArrowDown className="w-4 h-4 ml-2" />
             ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
+              <ArrowUpDown className="w-4 h-4 ml-2" />
             )}
           </Button>
         </div>
@@ -178,9 +179,12 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                className="w-8 h-8 p-0 data-[state=open]:bg-muted"
+              >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -194,7 +198,6 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-red-500"
                 onClick={() => setIsDeleteTransactionDialogOpen(true)}
               >
                 Delete transaction
@@ -204,6 +207,7 @@ export const getColumns = (): ColumnDef<Transaction>[] => [
         </>
       );
     },
+    size: 40,
   },
 ];
 
@@ -272,7 +276,7 @@ export default function TransactionTable() {
           className={`w-full ${isLoading ? "animate-pulse" : ""}`}
         >
           {ready ? (
-            <div className="flex items-center py-4 gap-2">
+            <div className="flex items-center gap-2 py-4">
               {/* <Input
               placeholder="Filter transactions..."
               value={
@@ -283,18 +287,18 @@ export default function TransactionTable() {
                 }
                 className="max-w-sm"
                 /> */}
-              <div className="ml-auto flex flex-row gap-2">
+              <div className="flex flex-row gap-2 ml-auto">
                 <Button
                   variant="outline"
                   onClick={() => openDialog("transactionDialog")}
                 >
-                  <Plus className="mr-2 h-4 w-4" />
+                  <Plus className="w-4 h-4 mr-2" />
                   Add transaction
                 </Button>
               </div>
             </div>
           ) : null}
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -336,7 +340,7 @@ export default function TransactionTable() {
                           colSpan={columns.length}
                           className="h-[49px] text-center"
                         >
-                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="w-full h-4" />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -345,7 +349,7 @@ export default function TransactionTable() {
               </TableBody>
             </Table>
           </div>
-          <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="flex items-center justify-end py-4 space-x-2">
             <div className="flex-1 text-sm text-muted-foreground">
               {totalTransactions} total rows
             </div>
