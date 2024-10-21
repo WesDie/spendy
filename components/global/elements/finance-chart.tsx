@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import {
@@ -22,7 +22,6 @@ import {
 import { BalanceChart } from "./charts/balance-chart";
 import { ExpenseChart } from "./charts/expenses-chart";
 import { ChartControls } from "./charts/chart-controls";
-import { Transaction } from "@/types/database-types";
 
 const chartConfigs = {
   incomeExpenses: {
@@ -58,29 +57,50 @@ export default function FinanceChart() {
     balanceBeforePeriod,
   } = useGlobalContext();
 
-  const dailyChartData = getDailyChartData(transactions);
-  const [activeView, setActiveView] = useState<"incomeExpenses" | "balance">(
-    "incomeExpenses"
+  const [chartType, setChartType] = useState<"balance" | "incomeExpenses">(
+    () => {
+      if (typeof window !== "undefined") {
+        return (
+          (localStorage.getItem("chartType") as "balance" | "incomeExpenses") ||
+          "incomeExpenses"
+        );
+      }
+      return "incomeExpenses";
+    }
   );
+
+  const [displayOption, setDisplayOption] = useState<
+    "both" | "income" | "expenses"
+  >(() => {
+    if (typeof window !== "undefined") {
+      return (
+        (localStorage.getItem("displayOption") as
+          | "both"
+          | "income"
+          | "expenses") || "both"
+      );
+    }
+    return "both";
+  });
+
+  const dailyChartData = getDailyChartData(transactions);
   const [activeChartData, setActiveChartData] = useState(dailyChartData);
   const [aggregationType, setAggregationType] = useState<
     "day" | "month" | "year"
   >("day");
 
-  const currentConfig = chartConfigs[activeView];
+  const currentConfig = chartConfigs[chartType];
 
   React.useEffect(() => {
     let { startDate, endDate } = getDateRange();
 
     startDate.setDate(startDate.getDate() + 1);
 
-    // For 'total' view, use the firstTransactionDate
     if (activeDateOption === "total") {
       startDate = firstTransactionDate(transactions);
-      endDate = new Date(); // Set to current date
+      endDate = new Date();
     }
 
-    // Fill in data for all days in the range
     if (activeDateOption === "total") {
       endDate = new Date(new Date().setDate(new Date().getDate() + 1));
     }
@@ -117,17 +137,17 @@ export default function FinanceChart() {
         setAggregationType("day");
         break;
       case "halfyear":
-        activeView === "balance"
+        chartType === "balance"
           ? setAggregationType("day")
           : setAggregationType("month");
         break;
       case "year":
-        activeView === "balance"
+        chartType === "balance"
           ? (setAggregationType("day"), (aggregationDays = 3))
           : setAggregationType("month");
         break;
       case "total":
-        activeView === "balance"
+        chartType === "balance"
           ? setAggregationType("month")
           : setAggregationType("year");
         break;
@@ -144,35 +164,37 @@ export default function FinanceChart() {
   }, [
     activeDateOption,
     getDateRange,
-    activeView,
+    chartType,
     aggregationType,
     transactions,
   ]);
 
-  const handleViewChange = (view: string) => {
-    setActiveView(view as "incomeExpenses" | "balance");
-  };
+  useEffect(() => {
+    localStorage.setItem("chartType", chartType);
+    localStorage.setItem("displayOption", displayOption);
+  }, [chartType, displayOption]);
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-col gap-2 md:gap-0 md:flex-row justify-between pb-4 sm:p-6">
+      <CardHeader className="flex flex-col justify-between gap-2 pb-4 md:gap-0 md:flex-row sm:p-6">
         <div className="flex flex-col space-y-1.5">
           <CardTitle>Financial Overview</CardTitle>
           <CardDescription>
-            {currentConfig.title} for the selected period
+            {chartType === "balance" ? "Balance" : "Income and Expenses"} for
+            the selected period
           </CardDescription>
         </div>
         <ChartControls
-          activeView={activeView}
-          onViewChange={handleViewChange}
-          views={["incomeExpenses", "balance"]}
-          names={["Income and Expenses", "Balance"]}
+          chartType={chartType}
+          onChartTypeChange={setChartType}
+          displayOption={displayOption}
+          onDisplayOptionChange={setDisplayOption}
         />
       </CardHeader>
       <CardContent className="p-1">
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeView}
+            key={chartType}
             initial={{ opacity: 0 }}
             animate={{ opacity: isLoading ? 0.2 : 1 }}
             exit={{ opacity: 0 }}
@@ -183,7 +205,7 @@ export default function FinanceChart() {
               config={currentConfig.config}
               className="h-[200px] aspect-auto"
             >
-              {activeView === "balance" ? (
+              {chartType === "balance" ? (
                 <BalanceChart
                   data={activeChartData}
                   activeDateOption={activeDateOption}
@@ -196,6 +218,12 @@ export default function FinanceChart() {
                   aggregationType={aggregationType}
                   activeDateOption={activeDateOption}
                   customTooltip={FinanceChartTooltip}
+                  showIncome={
+                    displayOption === "both" || displayOption === "income"
+                  }
+                  showExpenses={
+                    displayOption === "both" || displayOption === "expenses"
+                  }
                 />
               )}
             </ChartContainer>

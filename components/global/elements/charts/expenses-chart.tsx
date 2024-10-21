@@ -17,6 +17,8 @@ interface ExpenseChartProps {
   activeDateOption: string;
   aggregationType: string;
   customTooltip?: (props: TooltipProps<number, string>) => React.ReactNode;
+  showIncome: boolean;
+  showExpenses: boolean;
 }
 
 export const ExpenseChart: React.FC<ExpenseChartProps> = ({
@@ -24,6 +26,8 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({
   activeDateOption,
   aggregationType,
   customTooltip,
+  showIncome,
+  showExpenses,
 }) => (
   <ResponsiveContainer width="100%" height="100%">
     <BarChart
@@ -80,18 +84,22 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({
         cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
         content={customTooltip}
       />
-      <Bar
-        dataKey="expenses"
-        fill="url(#expenseGradient)"
-        stroke="var(--color-expenses)"
-        strokeOpacity={0}
-      />
-      <Bar
-        dataKey="income"
-        fill="url(#incomeGradient)"
-        stroke="var(--color-income)"
-        strokeOpacity={0}
-      />
+      {showExpenses && (
+        <Bar
+          dataKey="expenses"
+          fill="url(#expenseGradient)"
+          stroke="var(--color-expenses)"
+          strokeOpacity={0}
+        />
+      )}
+      {showIncome && (
+        <Bar
+          dataKey="income"
+          fill="url(#incomeGradient)"
+          stroke="var(--color-income)"
+          strokeOpacity={0}
+        />
+      )}
     </BarChart>
   </ResponsiveContainer>
 );
