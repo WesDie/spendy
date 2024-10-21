@@ -44,6 +44,14 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const formattedTransactions = transactions.map((transaction) => {
+    const date = new Date(transaction.date);
+    return {
+      ...transaction,
+      date: date.setMinutes(date.getMinutes() + date.getTimezoneOffset()),
+    };
+  });
+
   // Calculate total balance
   const { data: balanceData, error: balanceError } = await supabase
     .from("spendy_transactions")
@@ -98,13 +106,26 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ recentTransactions }, { status: 200 });
+    const formattedRecentTransactions = recentTransactions.map(
+      (transaction) => {
+        const date = new Date(transaction.date);
+        return {
+          ...transaction,
+          date: date.setMinutes(date.getMinutes() + date.getTimezoneOffset()),
+        };
+      }
+    );
+
+    return NextResponse.json(
+      { recentTransactions: formattedRecentTransactions },
+      { status: 200 }
+    );
   }
 
   // For other types, return the full response
   return NextResponse.json(
     {
-      transactions,
+      transactions: formattedTransactions,
       totalBalance,
       balanceBeforePeriod,
       totalCount: count,
