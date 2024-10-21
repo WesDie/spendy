@@ -234,7 +234,10 @@ export function GlobalContextProvider({
           endDate: endOfYear(currentDate),
         };
       case "total":
-        return { startDate: new Date(0), endDate: new Date() };
+        return {
+          startDate: new Date(0),
+          endDate: new Date(new Date().setDate(new Date().getDate() + 1)),
+        };
       default:
         return { startDate: new Date(), endDate: new Date() };
     }
