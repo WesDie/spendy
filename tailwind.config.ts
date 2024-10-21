@@ -61,6 +61,9 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
       },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)"],
+      },
     },
   },
   plugins: [

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { ThemeDataProvider } from "@/components/providers/theme-provider";
 import { ReactQueryProvider } from "@/components/providers/react-query-provider";
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Spendy",
@@ -17,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} flex max-h-dvh min-h-dvh w-full`}>
+    <html lang="en" suppressHydrationWarning className={GeistSans.className}>
+      <body className={`flex max-h-dvh min-h-dvh w-full`}>
         <NextThemesProvider
           attribute="class"
           defaultTheme="dark"
