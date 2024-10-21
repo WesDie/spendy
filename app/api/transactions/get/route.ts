@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
   const endDate = searchParams.get("endDate");
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "1000");
+  const type = searchParams.get("type") || "all";
 
   const supabase = createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
@@ -80,22 +81,27 @@ export async function GET(req: NextRequest) {
     balanceBeforePeriod = previousBalanceData[0]?.sum || 0;
   }
 
-  // Get most recent 5 transactions from all time
-  const { data: recentTransactions, error: recentTransactionsError } =
-    await supabase
-      .from("spendy_transactions")
-      .select("*, category:spendy_categories(*)")
-      .eq("user_id", userData?.user?.id ?? "")
-      .order("date", { ascending: false })
-      .range(0, 4);
+  if (type === "recent") {
+    const { data: recentTransactions, error: recentTransactionsError } =
+      await supabase
+        .from("spendy_transactions")
+        .select("*, category:spendy_categories(*)")
+        .eq("user_id", userData?.user?.id ?? "")
+        .eq("group", groupId ?? "")
+        .order("date", { ascending: false })
+        .range(0, 4);
 
-  if (recentTransactionsError) {
-    return NextResponse.json(
-      { error: "Failed to fetch recent transactions", status: 500 },
-      { status: 500 }
-    );
+    if (recentTransactionsError) {
+      return NextResponse.json(
+        { error: "Failed to fetch recent transactions", status: 500 },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ recentTransactions }, { status: 200 });
   }
 
+  // For other types, return the full response
   return NextResponse.json(
     {
       transactions,
@@ -104,7 +110,6 @@ export async function GET(req: NextRequest) {
       totalCount: count,
       currentPage: page,
       pageSize,
-      recentTransactions,
     },
     { status: 200 }
   );

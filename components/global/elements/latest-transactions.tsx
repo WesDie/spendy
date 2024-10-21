@@ -15,7 +15,7 @@ export default function LatestTransactions() {
   const {
     currentGroup,
     recentTransactions: transactions,
-    isTransactionsLoading: isLoading,
+    isRecentTransactionsLoading: isLoading,
   } = useGlobalContext();
 
   return (
@@ -48,7 +48,7 @@ export default function LatestTransactions() {
         <CardContent className="grid gap-6">
           {transactions.map((transaction) => (
             <div key={transaction.id} className="flex items-center space-x-4">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-primary/10">
                 <span role="img" aria-label="category icon" className="text-lg">
                   {transaction.category?.icon ||
                     (transaction.amount > 0 ? "+" : "-")}
@@ -80,10 +80,10 @@ export default function LatestTransactions() {
             transactions.length === 0 &&
             Array.from({ length: 5 }, (_, index) => (
               <div key={index} className="flex items-center space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-primary/10">
                   <Skeleton className="w-full h-full rounded-full" />
                 </div>
-                <div className="space-y-2 flex-grow">
+                <div className="flex-grow space-y-2">
                   <Skeleton className="w-full h-4" />
                   <Skeleton className="w-1/4 h-4" />
                 </div>

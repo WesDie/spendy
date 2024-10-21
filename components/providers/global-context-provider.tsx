@@ -45,6 +45,7 @@ type GlobalContextType = {
   setPageNumber: (pageNumber: number) => void;
   usePageSize: boolean;
   setUsePageSize: (usePageSize: boolean) => void;
+  isRecentTransactionsLoading: boolean;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -78,6 +79,8 @@ export function GlobalContextProvider({
     []
   );
   const [usePageSize, setUsePageSize] = useState(false);
+  const [isRecentTransactionsLoading, setIsRecentTransactionsLoading] =
+    useState(true);
 
   const { data: userData, error: userError } = useQuery({
     queryKey: ["userProfile"],
@@ -89,6 +92,28 @@ export function GlobalContextProvider({
       setUser(userData);
     }
   }, [userData]);
+
+  const {
+    data: recentTransactionsData,
+    isLoading: isRecentTransactionsQueryLoading,
+  } = useQuery({
+    queryKey: ["recentTransactions", currentGroup?.id],
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/transactions/get?groupId=${currentGroup?.id}&type=recent`
+      );
+      const data = await response.json();
+      return data.recentTransactions;
+    },
+    enabled: !!currentGroup?.id,
+  });
+
+  useEffect(() => {
+    if (recentTransactionsData) {
+      setRecentTransactions(recentTransactionsData);
+      setIsRecentTransactionsLoading(false);
+    }
+  }, [recentTransactionsData]);
 
   const { data: transactionsData, isLoading: isTransactionsLoading } = useQuery(
     {
@@ -106,11 +131,10 @@ export function GlobalContextProvider({
             currentGroup?.id
           }&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}${
             usePageSize ? `&page=${currentPage}&pageSize=${pageSize}` : ""
-          }`
+          }&type=all`
         );
         const data = await response.json();
         setBalanceBeforePeriod(data.balanceBeforePeriod);
-        setRecentTransactions(data.recentTransactions);
         return data;
       },
       enabled: !!currentGroup?.id,
@@ -247,7 +271,8 @@ export function GlobalContextProvider({
         totalTransactions: transactionsData?.totalCount || 0,
         currentPage,
         pageSize,
-        isTransactionsLoading: isTransactionsLoading,
+        isTransactionsLoading,
+        isRecentTransactionsLoading,
         balanceBeforePeriod,
         setBalanceBeforePeriod,
         recentTransactions,
