@@ -91,7 +91,13 @@ function validateTransactionData(transactionData: TransactionData): {
     return { message: "Transaction date is required", fields: ["date"] };
   if (!transactionData.group)
     return { message: "Group is required", fields: ["group"] };
-  if (new Date(transactionData.date) > new Date())
+
+  let currentDate = new Date();
+  const transactionDate = new Date(transactionData.date);
+  const timezoneOffset = currentDate.getTimezoneOffset() / 60;
+  currentDate.setHours(currentDate.getHours() - timezoneOffset);
+
+  if (transactionDate.getTime() > currentDate.getTime())
     return {
       message: "Transaction date cannot be in the future",
       fields: ["date"],
