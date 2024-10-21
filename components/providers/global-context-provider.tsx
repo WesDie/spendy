@@ -97,7 +97,7 @@ export function GlobalContextProvider({
     data: recentTransactionsData,
     isLoading: isRecentTransactionsQueryLoading,
   } = useQuery({
-    queryKey: ["recentTransactions", currentGroup?.id],
+    queryKey: ["transactions", currentGroup?.id],
     queryFn: async () => {
       const response = await fetch(
         `/api/transactions/get?groupId=${currentGroup?.id}&type=recent`
